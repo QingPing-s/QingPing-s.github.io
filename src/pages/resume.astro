@@ -1,0 +1,106 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { githubUrl, liveDemoUrl, sitePath } from "../lib/site.js";
+---
+
+<BaseLayout
+  title="简历 | AI Agent 工程博客"
+  description="人工智能专业研究生，目标 AI Agent、RAG 和 LLM 应用开发实习。"
+>
+  <article class="article-page resume-page">
+    <header class="article-header resume-header">
+      <p class="eyebrow">Resume</p>
+      <h1>Agent<br />应用开发</h1>
+      <p>
+        人工智能专业研究生，关注 Agent 工作流、检索增强生成、结构化输出、评测与后端工程，能够将原型推进为可运行、可测试和可部署的系统。
+      </p>
+      <div class="inline-actions">
+        <a class="primary-link" href={sitePath("projects/jobpilot-agent/")}>查看项目</a>
+        <a class="outline-link" href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+        <a class="outline-link" href={liveDemoUrl} target="_blank" rel="noreferrer">在线演示</a>
+      </div>
+    </header>
+
+    <section class="resume-section resume-summary">
+      <div>
+        <span>教育背景</span>
+        <strong>研究生 · 人工智能专业</strong>
+      </div>
+      <div>
+        <span>目标方向</span>
+        <strong>AI Agent / RAG / LLM Application</strong>
+      </div>
+      <div>
+        <span>任职情况</span>
+        <strong>在校 · 随时到岗</strong>
+      </div>
+      <div>
+        <span>实习安排</span>
+        <strong>每周 5 天 · 可持续 6 个月</strong>
+      </div>
+    </section>
+
+    <section class="resume-section">
+      <div class="section-heading">
+        <p class="eyebrow">Project Experience</p>
+        <h2>项目经历</h2>
+      </div>
+      <article class="timeline-item project-timeline">
+        <div>
+          <span>AI Agent Job Matching Platform</span>
+          <h3>JobPilot RAG-Agent｜AI Agent 岗位匹配与简历优化平台</h3>
+          <p>Python · LangGraph · FastAPI · React · ChromaDB · BGE Embedding · DeepSeek API · SQLite · Docker · Azure Container Apps</p>
+        </div>
+        <ul class="resume-bullets">
+          <li>基于 LangGraph StateGraph 将岗位匹配拆分为候选人画像解析、JD 解析、混合召回、重排、确定性评分、差距分析和简历建议等可观测节点，并支持条件路由、重试与规则降级。</li>
+          <li>构建 BGE 向量检索与 TF-IDF 关键词检索双路召回，通过 Weighted RRF 融合排名；实现固定模型版本、ChromaDB 增量索引及向量服务异常时的关键词降级。</li>
+          <li>设计“任职要求 70 分、加分项 20 分、岗位职责相关性 10 分”的确定性评分体系，输出可解释匹配依据，避免对全量岗位逐条调用 LLM。</li>
+          <li>使用 FastAPI 实现异步任务、SSE 实时进度、取消与超时控制，并通过 Trace 和 SQLite checkpoint 支持运行观测及中断恢复。</li>
+          <li>基于 100 条岗位和 50 条人工标注查询对比五组检索基线，最佳 Recall@5/Recall@10 达到 88%/94%；使用 Docker、Azure Container Registry 和 Azure Container Apps 完成云端部署。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="resume-section">
+      <div class="section-heading">
+        <p class="eyebrow">Technical Skills</p>
+        <h2>技术能力</h2>
+      </div>
+      <div class="skill-matrix">
+        <div>
+          <strong>Agent / LLM</strong>
+          <p>LangGraph、RAG、Prompt Engineering、Tool Calling、Structured Output、DeepSeek API</p>
+        </div>
+        <div>
+          <strong>Backend</strong>
+          <p>Python、FastAPI、Pydantic、OpenAI SDK、SQLite、REST API、SSE、pytest</p>
+        </div>
+        <div>
+          <strong>Retrieval</strong>
+          <p>ChromaDB、BGE Embedding、TF-IDF、Weighted RRF、Rerank、Offline Evaluation</p>
+        </div>
+        <div>
+          <strong>Frontend / DevOps</strong>
+          <p>React、Vite、Playwright、Docker、GitHub Actions、Azure Container Apps</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="resume-section">
+      <div class="section-heading">
+        <p class="eyebrow">Working Style</p>
+        <h2>工程习惯与软技能</h2>
+      </div>
+      <div class="chips">
+        <span>主动查阅资料</span>
+        <span>问题拆解</span>
+        <span>自驱学习</span>
+        <span>独立定位问题</span>
+        <span>沟通协作</span>
+        <span>责任心</span>
+        <span>测试意识</span>
+        <span>文档沉淀</span>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

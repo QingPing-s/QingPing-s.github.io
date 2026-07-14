@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sitePath } from "../../lib/site.js";
+
+const posts = [
+  {
+    category: "AI Agent Engineering",
+    title: "如何把 LLM Demo 做成可写进简历的 Agent 项目",
+    description: "从单次 Prompt 调用升级到具备状态、检索、评分、日志、评测和部署能力的工程系统。",
+    href: sitePath("blog/jobpilot-agent-engineering-notes/"),
+    meta: "工程方法 · 8 分钟",
+  },
+  {
+    category: "Hybrid Retrieval / Evaluation",
+    title: "从消融实验看 Hybrid Retrieval：Weighted RRF 为什么没有赢过 Keyword",
+    description: "基于 100 条岗位、50 条人工标注查询，对比 5 组检索基线，并复盘向量降级、RRF 融合与规则重排的真实效果。",
+    href: sitePath("blog/hybrid-retrieval-rrf/"),
+    meta: "真实指标 · 10 分钟",
+  },
+  {
+    category: "LangGraph",
+    title: "条件路由、降级与 checkpoint：让 Agent 不止能顺序执行",
+    description: "从错误处理、人工审核和低分跳过策略出发，拆解 JobPilot 的可靠工作流设计。",
+    href: sitePath("blog/langgraph-resilience/"),
+    meta: "工作流设计 · 7 分钟",
+  },
+];
+---
+
+<BaseLayout
+  title="技术博客 | AI Agent 工程博客"
+  description="记录 AI Agent、Hybrid RAG、LangGraph、评测和云部署的工程实践。"
+>
+  <section class="article-page">
+    <header class="article-header">
+      <p class="eyebrow">Engineering Notes</p>
+      <h1>技术博客</h1>
+      <p>
+        不只记录“用了什么框架”，更关注为什么这样设计、如何验证效果，以及系统失败时怎样继续工作。
+      </p>
+    </header>
+
+    <div class="post-list">
+      {
+        posts.map((post) => (
+          <a class="post-card" href={post.href}>
+            <span>{post.category}</span>
+            <h2>{post.title}</h2>
+            <p>{post.description}</p>
+            <small>{post.meta}</small>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

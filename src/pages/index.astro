@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sitePath } from "../lib/site.js";
+
+const skills = [
+  "LangGraph",
+  "RAG",
+  "Agent Memory",
+  "Multi-Agent",
+  "FastAPI",
+  "LLM Evaluation",
+  "MARL",
+];
+
+const entries = [
+  {
+    label: "Notes",
+    title: "技术笔记",
+    description: "整理 AI Agent、RAG、长期记忆和工程评测相关实践。",
+    href: sitePath("notes/"),
+  },
+  {
+    label: "Projects",
+    title: "项目",
+    description: "展示可运行的 Agent 系统、检索链路和全栈交付案例。",
+    href: sitePath("projects/"),
+  },
+  {
+    label: "Research",
+    title: "科研",
+    description: "关注多智能体协作、长期记忆和多智能体强化学习。",
+    href: sitePath("research/"),
+  },
+  {
+    label: "About",
+    title: "关于我",
+    description: "查看个人方向、技术兴趣和 GitHub 入口。",
+    href: sitePath("about/"),
+  },
+];
+---
+
+<BaseLayout
+  title="QingPing-s | AI Agent Developer & Multi-Agent Researcher"
+  description="QingPing-s 的 AI Agent 实习和科研展示主页，聚焦 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习。"
+>
+  <section class="profile-hero">
+    <div class="profile-hero-inner">
+      <p class="eyebrow">AI Agent / RAG / Multi-Agent Systems</p>
+      <h1>QingPing-s</h1>
+      <p class="profile-subtitle">
+        <span>AI Agent Developer</span>
+        <span>&amp; Multi-Agent Researcher</span>
+      </p>
+      <p class="profile-copy">
+        专注于 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习的工程实践和研究。
+      </p>
+      <div class="hero-actions profile-actions">
+        <a class="primary-link" href={sitePath("projects/")}>查看项目</a>
+        <a class="secondary-link profile-secondary" href={sitePath("notes/")}>阅读技术笔记</a>
+        <a class="outline-link" href={sitePath("resume.pdf")} target="_blank" rel="noreferrer">
+          下载简历
+        </a>
+      </div>
+      <div class="chips profile-tags" aria-label="技术标签">
+        {skills.map((skill) => <span>{skill}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact home-entry-section">
+    <div class="section-heading">
+      <p class="eyebrow">Explore</p>
+      <h2>面向实习和科研展示的内容入口</h2>
+      <p>
+        首页保留简洁定位，把更具体的项目、笔记和研究方向拆分到独立页面，方便快速浏览。
+      </p>
+    </div>
+    <div class="home-entry-grid">
+      {
+        entries.map((entry) => (
+          <a class="post-card" href={entry.href}>
+            <span>{entry.label}</span>
+            <h2>{entry.title}</h2>
+            <p>{entry.description}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
