@@ -228,26 +228,51 @@ h3 {
 }
 
 .profile-hero {
+  position: relative;
   display: flex;
   min-height: calc(100vh - 68px);
   align-items: center;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.profile-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   background:
-    linear-gradient(90deg, rgba(20, 127, 117, 0.08), rgba(47, 91, 215, 0.04)),
-    var(--bg);
+    linear-gradient(90deg, rgba(6, 23, 21, 0.82), rgba(6, 23, 21, 0.48) 46%, rgba(6, 23, 21, 0.16)),
+    linear-gradient(0deg, rgba(6, 23, 21, 0.32), rgba(6, 23, 21, 0.12));
+  content: "";
+}
+
+.profile-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .profile-hero-inner {
+  position: relative;
+  z-index: 2;
   width: min(1120px, 90vw);
   margin: 0 auto;
   padding: 86px 0;
 }
 
+.profile-hero-copy {
+  max-width: 760px;
+  min-width: 0;
+}
+
 .profile-hero h1 {
   max-width: 860px;
   margin-bottom: 10px;
-  color: var(--ink);
+  color: #ffffff;
   font-size: clamp(3rem, 8vw, 6.25rem);
   line-height: 0.98;
 }
@@ -267,7 +292,7 @@ h3 {
 
 .profile-copy {
   max-width: 760px;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 1.16rem;
 }
 
@@ -281,10 +306,11 @@ h3 {
   max-width: 620px;
   margin-top: 30px;
   padding: 20px 56px 20px 22px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface) 92%, var(--soft));
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(16px);
   gap: 5px;
 }
 
@@ -350,8 +376,8 @@ h3 {
 }
 
 .profile-tags span {
-  border: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .hero-actions,
@@ -1158,6 +1184,10 @@ pre code {
     padding: 58px 0 68px;
   }
 
+  .profile-hero-video {
+    object-position: 62% center;
+  }
+
   .profile-copy {
     font-size: 1rem;
   }
@@ -1346,5 +1376,9 @@ pre code {
     transition-duration: 1ms !important;
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .profile-hero-video {
+    display: none;
   }
 }
