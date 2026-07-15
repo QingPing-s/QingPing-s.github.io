@@ -11,30 +11,36 @@ const skills = [
   "LLM Evaluation",
   "MARL",
 ];
+
+const latestPost = {
+  href: sitePath("notes/rag/weighted-rrf/"),
+  title: "从消融实验看 Hybrid Retrieval：Weighted RRF 为什么没有赢过 Keyword",
+  description: "一次 RAG 检索实验复盘，记录向量召回、关键词召回和加权 RRF 的真实表现。",
+  meta: "RAG · Retrieval · Experiment",
+};
 ---
 
 <BaseLayout
-  title="QingPing-s | AI Agent Developer & Multi-Agent Researcher"
-  description="QingPing-s 的 AI Agent 实习和科研展示主页，聚焦 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习。"
+  title="QingPing’s tech blog"
+  description="QingPing’s tech blog 记录 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习相关的工程实践和研究笔记。"
 >
   <section class="profile-hero">
     <div class="profile-hero-inner">
       <p class="eyebrow">AI Agent / RAG / Multi-Agent Systems</p>
-      <h1>QingPing-s</h1>
-      <p class="profile-subtitle">
-        <span>AI Agent Developer</span>
-        <span>&amp; Multi-Agent Researcher</span>
-      </p>
+      <h1>QingPing’s tech blog</h1>
       <p class="profile-copy">
-        专注于 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习的工程实践和研究。
+        记录 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习相关的工程实践和研究笔记。
       </p>
       <div class="hero-actions profile-actions">
-        <a class="primary-link" href={sitePath("projects/")}>查看项目</a>
-        <a class="secondary-link profile-secondary" href={sitePath("notes/")}>阅读技术笔记</a>
-        <a class="outline-link" href={sitePath("resume.pdf")} target="_blank" rel="noreferrer">
-          下载简历
-        </a>
+        <a class="primary-link" href={sitePath("notes/")}>进入笔记</a>
+        <a class="secondary-link profile-secondary" href={sitePath("projects/")}>浏览项目</a>
       </div>
+      <a class="latest-post-card" href={latestPost.href} aria-label={`阅读最新文章：${latestPost.title}`}>
+        <span class="latest-post-kicker">Latest Post</span>
+        <strong>{latestPost.title}</strong>
+        <p>{latestPost.description}</p>
+        <small>{latestPost.meta}</small>
+      </a>
       <div class="chips profile-tags" aria-label="技术标签">
         {skills.map((skill) => <span>{skill}</span>)}
       </div>

@@ -275,6 +275,61 @@ h3 {
   margin-top: 30px;
 }
 
+.latest-post-card {
+  position: relative;
+  display: grid;
+  max-width: 620px;
+  margin-top: 30px;
+  padding: 20px 56px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 92%, var(--soft));
+  box-shadow: var(--shadow-sm);
+  gap: 5px;
+}
+
+.latest-post-card::after {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  color: var(--muted);
+  content: "→";
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.latest-post-card:hover {
+  border-color: var(--teal);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.latest-post-kicker {
+  color: var(--blue);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.latest-post-card strong {
+  color: var(--ink);
+  font-size: 1.04rem;
+  line-height: 1.45;
+}
+
+.latest-post-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.latest-post-card small {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
 .profile-secondary {
   border-color: var(--blue);
   color: var(--blue);

@@ -10,11 +10,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const currentPath = Astro.url.pathname;
 const navigation = [
   { href: sitePath(), label: "首页", prefix: sitePath() },
-  { href: sitePath("notes/"), label: "技术笔记", prefix: sitePath("notes/") },
+  { href: sitePath("notes/"), label: "笔记", prefix: sitePath("notes/") },
   { href: sitePath("projects/"), label: "项目", prefix: sitePath("projects/") },
-  { href: sitePath("research/"), label: "科研", prefix: sitePath("research/") },
-  { href: sitePath("about/"), label: "关于我", prefix: sitePath("about/") },
-  { href: sitePath("resume.pdf"), label: "简历", external: true },
+  { href: sitePath("about/"), label: "关于", prefix: sitePath("about/") },
 ];
 ---
 
