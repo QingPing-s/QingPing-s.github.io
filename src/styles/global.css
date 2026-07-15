@@ -526,6 +526,125 @@ h3 {
   min-height: 72vh;
 }
 
+.notes-shell {
+  display: grid;
+  width: min(1240px, 92vw);
+  margin: 0 auto;
+  padding: 42px 0 76px;
+  align-items: start;
+  gap: 34px;
+  grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.notes-sidebar {
+  position: sticky;
+  top: 92px;
+}
+
+.notes-sidebar-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.notes-sidebar-panel summary {
+  cursor: pointer;
+  padding: 14px 16px;
+  color: var(--teal-dark);
+  font-weight: 900;
+}
+
+.notes-nav {
+  display: grid;
+  max-height: calc(100vh - 160px);
+  overflow: auto;
+  padding: 0 12px 14px;
+  gap: 16px;
+}
+
+.notes-nav section {
+  display: grid;
+  gap: 6px;
+}
+
+.notes-nav h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.notes-nav ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 3px;
+  list-style: none;
+}
+
+.notes-nav a {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.notes-nav a:hover,
+.notes-nav a.active {
+  background: var(--soft);
+  color: var(--teal-dark);
+}
+
+.notes-content {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.notes-content .article-page {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.notes-content .article-header h1 {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.notes-directory-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.notes-directory-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.notes-directory-card h2 {
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+}
+
+.notes-directory-card ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 6px;
+  list-style: none;
+}
+
+.notes-directory-card a {
+  color: var(--teal-dark);
+  font-weight: 800;
+}
+
 .article-header {
   max-width: 860px;
   margin-bottom: 34px;
@@ -890,9 +1009,48 @@ h3 {
   .split,
   .content-grid,
   .home-entry-grid,
+  .notes-shell,
+  .notes-directory-grid,
   .comparison-grid,
   .skill-matrix {
     grid-template-columns: 1fr;
+  }
+
+  .notes-shell {
+    width: min(100% - 32px, 720px);
+    padding: 24px 0 54px;
+  }
+
+  .notes-sidebar {
+    position: static;
+  }
+
+  .notes-nav {
+    max-height: 62vh;
+  }
+
+  .notes-content,
+  .notes-content .article-page,
+  .notes-content .article-header {
+    width: min(100%, 330px);
+    max-width: min(100%, 330px);
+  }
+
+  .notes-content .article-header h1 {
+    max-width: 330px;
+    font-size: 2rem;
+    line-height: 1.18;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+  }
+
+  .notes-content h2,
+  .notes-content h3,
+  .notes-content p,
+  .notes-content li {
+    max-width: 330px;
+    overflow-wrap: anywhere;
+    word-break: break-all;
   }
 
   .workflow-grid {

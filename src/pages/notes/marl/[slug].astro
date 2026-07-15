@@ -1,0 +1,26 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { placeholderNotes } from "../../../lib/notes.js";
+
+export function getStaticPaths() {
+  return Object.entries(placeholderNotes)
+    .filter(([key]) => key.startsWith("marl/"))
+    .map(([key, note]) => ({ params: { slug: key.split("/")[1] }, props: { note } }));
+}
+
+const { note } = Astro.props;
+---
+
+<NotesLayout title={`${note.title} | 技术笔记`} description={`${note.section}：${note.title}`}>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">{note.section}</p>
+      <h1>{note.title}</h1>
+      <p>该主题已纳入技术笔记目录，后续会补充系统化内容。</p>
+    </header>
+    <aside class="callout">
+      <strong>占位页</strong>
+      <p>当前只保留目录位置，避免一次性生成低质量正文。</p>
+    </aside>
+  </article>
+</NotesLayout>
