@@ -7,18 +7,25 @@ const {
   description = "QingPing-s 的 AI Agent、RAG、多智能体和编程技术笔记。",
 } = Astro.props;
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
+const notesIndexPath = noteHref("").replace(/\/$/, "");
 ---
 
 <BaseLayout title={title} description={description}>
   <div class="notes-shell">
     <aside class="notes-sidebar" aria-label="技术笔记侧边栏">
       <details class="notes-sidebar-panel" open data-notes-sidebar>
-        <summary>技术笔记目录</summary>
+        <summary>技术笔记</summary>
         <nav class="notes-nav">
           {
-            noteSections.map((section) => (
-              <section>
-                <h2>{section.title}</h2>
+            noteSections.map((section, sectionIndex) => {
+              const sectionActive = section.items.some(([, path]) => {
+                const href = noteHref(path);
+                return currentPath === href.replace(/\/$/, "");
+              });
+              const sectionOpen = sectionActive || (currentPath === notesIndexPath && sectionIndex === 0);
+              return (
+              <details class="notes-nav-section" open={sectionOpen}>
+                <summary>{section.title}</summary>
                 <ul>
                   {
                     section.items.map(([label, path]) => {
@@ -34,8 +41,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
                     })
                   }
                 </ul>
-              </section>
-            ))
+              </details>
+              );
+            })
           }
         </nav>
       </details>

@@ -645,7 +645,7 @@ h3 {
   box-shadow: var(--shadow-sm);
 }
 
-.notes-sidebar-panel summary {
+.notes-sidebar-panel > summary {
   cursor: pointer;
   padding: 14px 16px;
   color: var(--teal-dark);
@@ -657,24 +657,51 @@ h3 {
   max-height: calc(100vh - 160px);
   overflow: auto;
   padding: 0 12px 14px;
-  gap: 16px;
+  gap: 4px;
 }
 
-.notes-nav section {
-  display: grid;
-  gap: 6px;
+.notes-nav-section {
+  border-radius: 6px;
 }
 
-.notes-nav h2 {
-  margin: 0;
+.notes-nav-section > summary {
+  display: flex;
+  min-height: 36px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  color: var(--muted);
+  font-size: 0.96rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+.notes-nav-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.notes-nav-section > summary::after {
+  color: var(--muted);
+  content: "⌄";
+  font-size: 1rem;
+  line-height: 1;
+  transform: rotate(-90deg);
+}
+
+.notes-nav-section[open] > summary {
   color: var(--ink);
-  font-size: 0.92rem;
+}
+
+.notes-nav-section[open] > summary::after {
+  transform: rotate(0deg);
 }
 
 .notes-nav ul {
   display: grid;
   margin: 0;
-  padding: 0;
+  padding: 2px 0 8px 14px;
+  border-left: 1px solid var(--line);
   gap: 3px;
   list-style: none;
 }
