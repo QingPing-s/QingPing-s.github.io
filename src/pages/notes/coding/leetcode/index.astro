@@ -1,0 +1,27 @@
+---
+import NotesLayout from "../../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../../lib/site.js";
+---
+
+<NotesLayout title="LeetCode | 技术笔记" description="按题型整理 LeetCode 刷题笔记。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">编程基础</p>
+      <h1>LeetCode</h1>
+      <p>按常见题型整理刷题记录，重点保留题目链接、核心思路、复杂度和容易复盘的细节。</p>
+    </header>
+
+    <div class="notes-directory-grid">
+      <article class="notes-directory-card">
+        <h2>哈希</h2>
+        <p>哈希表、哈希集合相关题型，关注快速查找、去重、分组和序列判断。</p>
+        <a href={sitePath("notes/coding/leetcode/hash/")}>查看笔记</a>
+      </article>
+      <article class="notes-directory-card">
+        <h2>双指针</h2>
+        <p>双指针相关题型，关注原地操作、排序后夹逼、左右边界移动。</p>
+        <a href={sitePath("notes/coding/leetcode/two-pointers/")}>查看笔记</a>
+      </article>
+    </div>
+  </article>
+</NotesLayout>

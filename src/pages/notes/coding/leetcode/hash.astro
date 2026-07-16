@@ -1,0 +1,83 @@
+---
+import NotesLayout from "../../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../../lib/site.js";
+---
+
+<NotesLayout title="哈希 | LeetCode" description="LeetCode 哈希题型笔记：两数之和、字母异位词分组、最长连续序列。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LeetCode</p>
+      <h1>哈希</h1>
+      <p>哈希表、哈希集合：查找非常快，平均时间复杂度是 <code>O(1)</code>。</p>
+      <div class="article-meta"><span>Hash Table</span><span>刷题笔记</span></div>
+    </header>
+
+    <h2><a href="https://leetcode.cn/problems/two-sum/" target="_blank" rel="noreferrer">1. 两数之和</a> <small>简单</small></h2>
+    <p>
+      给定一个整数数组 <code>nums</code> 和一个整数目标值 <code>target</code>，
+      在数组中找出和为目标值 <code>target</code> 的两个整数，并返回它们的数组下标。
+    </p>
+    <p>可以假设每种输入只会对应一个答案，并且不能使用两次相同的元素；答案可以按任意顺序返回。</p>
+    <h3>思路</h3>
+    <ul>
+      <li>暴力法：两层循环，外层 <code>i</code>，内层从 <code>i + 1</code> 依次推进。</li>
+      <li>哈希法：每次查找一个数是否存在，平均复杂度是 <code>O(1)</code>。</li>
+      <li>遍历数组时，对于当前数字 <code>num</code>，需要找 <code>target - num</code> 在不在哈希表中；如果在，就返回两个数的下标；如果没有，就把当前数字加入哈希表。</li>
+    </ul>
+    <h3>复盘</h3>
+    <ul>
+      <li>Python 里的哈希表通常就是字典 <code>dict</code>，用于存储 key 和 value。</li>
+      <li><code>enumerate(nums)</code> 可以同时返回下标和元素。</li>
+      <li><code>complement</code> 表示当前数字需要补上的另一个数。</li>
+      <li>命中后返回 <code>[hash_map[complement], i]</code>。</li>
+    </ul>
+    <aside class="callout">
+      <strong>原笔记截图</strong>
+      <p>Obsidian 原文包含截图：<code>Pasted image 20260704112605.png</code>。</p>
+    </aside>
+
+    <h2><a href="https://leetcode.cn/problems/group-anagrams/" target="_blank" rel="noreferrer">49. 字母异位词分组</a> <small>中等</small></h2>
+    <p>给一组字符串，把字母组成相同的字符串分到同一组。</p>
+    <p>示例：输入 <code>strs = ["eat", "tea", "tan", "ate", "nat", "bat"]</code>，输出可以包含 <code>["ate", "eat", "tea"]</code> 这一组。</p>
+    <h3>思路</h3>
+    <p>
+      遍历每个字符串，把它排序后的结果作为 key。key 相同的字符串就是字母异位词，
+      放到同一个列表中；最后返回所有列表。
+    </p>
+    <h3>Tip</h3>
+    <ul>
+      <li><code>sorted("eat")</code> 的结果是 <code>['a', 'e', 't']</code>。</li>
+      <li><code>''.join(['a', 'e', 't'])</code> 的结果是 <code>"aet"</code>。</li>
+      <li><code>'-'.join(['a', 'e', 't'])</code> 的结果是 <code>"a-e-t"</code>。</li>
+      <li><code>hash_map[key].append(s)</code> 表示把当前字符串 <code>s</code> 放进 key 对应的列表里。</li>
+      <li><code>hash_map.values()</code> 用于取出所有 value。</li>
+      <li>进阶版本可以使用 <code>defaultdict(list)</code>。</li>
+    </ul>
+    <aside class="callout">
+      <strong>原笔记截图</strong>
+      <p>Obsidian 原文包含截图：<code>Pasted image 20260704115304.png</code>。</p>
+    </aside>
+
+    <h2><a href="https://leetcode.cn/problems/longest-consecutive-sequence/" target="_blank" rel="noreferrer">128. 最长连续序列</a> <small>中等</small></h2>
+    <p>
+      给定一个未排序的整数数组 <code>nums</code>，找出数字连续的最长序列长度。
+      题目要求设计并实现时间复杂度为 <code>O(n)</code> 的算法。
+    </p>
+    <h3>思路</h3>
+    <ul>
+      <li>把所有数字放入集合中，利用哈希快速判断数字是否存在。</li>
+      <li>只从连续序列的起点开始找，也就是当前数字 <code>num - 1</code> 不在集合中时才向后扩展。</li>
+      <li>最长连续序列中重复数字不算，所以可以使用集合去重。</li>
+      <li>看似是两层循环，其实只有起点才会进入 <code>while</code> 循环。</li>
+    </ul>
+    <aside class="callout">
+      <strong>原笔记截图</strong>
+      <p>Obsidian 原文包含截图：<code>Pasted image 20260704232224.png</code>。</p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/coding/leetcode/two-pointers/")}>双指针 →</a>
+    </div>
+  </article>
+</NotesLayout>

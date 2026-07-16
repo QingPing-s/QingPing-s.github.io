@@ -4,7 +4,7 @@ import { placeholderNotes } from "../../../lib/notes.js";
 
 export function getStaticPaths() {
   return Object.entries(placeholderNotes)
-    .filter(([key]) => key.startsWith("coding/"))
+    .filter(([key]) => key.startsWith("coding/") && key !== "coding/leetcode")
     .map(([key, note]) => ({ params: { slug: key.split("/")[1] }, props: { note } }));
 }
 
