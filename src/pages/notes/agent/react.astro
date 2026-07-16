@@ -1,0 +1,159 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="ReAct | 技术笔记"
+  description="ReAct 框架通过 Thought、Action、Observation 的交替循环，让大模型在推理、工具调用和环境反馈之间形成闭环。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 基础</p>
+      <h1>ReAct：Reasoning 与 Acting 的闭环框架</h1>
+      <p>
+        ReAct 的核心不是让模型先完整思考、再一次性执行，而是让推理和行动交替发生：
+        Thought 决定下一步，Action 调用工具，Observation 把真实环境反馈带回上下文。
+      </p>
+      <div class="article-meta"><span>Agent Loop</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <aside class="callout">
+      <strong>一句话总结</strong>
+      <p>
+        ReAct 让 LLM 从“回答问题”升级为“完成任务”：模型不只生成文本，还能基于推理选择工具，
+        再根据工具返回结果修正下一轮推理。
+      </p>
+    </aside>
+
+    <h2>它解决了什么问题</h2>
+    <p>
+      在 ReAct 出现之前，常见模式可以粗略分成纯推理和纯行动两类。纯推理依赖模型内部知识，
+      遇到过期信息、冷门知识或需要验证的问题时容易幻觉；纯行动则缺少显式规划，
+      在多跳任务里一旦走偏，系统很难知道为什么失败。
+    </p>
+    <p>
+      ReAct 把 Reasoning 和 Acting 交错起来。推理负责给行动提供方向，行动负责从环境中取回证据，
+      观察结果再反过来修正下一步推理。静态知识和动态验证同时存在，Agent 才能在真实环境中纠错。
+    </p>
+
+    <h2>核心机制：Thought、Action、Observation</h2>
+    <p>一个典型 ReAct 循环包含三个环节：</p>
+    <ol>
+      <li><strong>Thought：</strong>模型分析当前任务、已有上下文和观察结果，决定下一步应该做什么。</li>
+      <li><strong>Action：</strong>模型选择并调用外部工具，例如搜索、计算器、代码执行器、文件读取或数据库查询。</li>
+      <li><strong>Observation：</strong>工具返回真实结果，系统把结果追加进上下文，作为下一轮 Thought 的输入。</li>
+    </ol>
+    <p>
+      如果信息还不够，Agent 会继续循环；如果已经足够，就输出 Final Answer。这个过程让复杂任务具备可追踪的中间状态，
+      也让错误更容易定位。
+    </p>
+
+    <figure class="article-figure">
+      <img src={sitePath("notes/react/query-loop-title.png")} alt="Claude Code queryLoop 与 ReAct 循环说明" loading="lazy" />
+      <figcaption>Claude Code 中的 queryLoop 可以理解为 ReAct 循环的工程化入口。</figcaption>
+    </figure>
+
+    <h2>为什么 ReAct 更可解释</h2>
+    <p>
+      ReAct 的价值不只是性能提升，更重要的是把黑盒决策过程拆成可观察的步骤。
+      每一轮 Thought 都记录了模型为什么要调用某个工具；每一次 Action 都有明确输入；
+      每个 Observation 都能回溯到真实环境返回。
+    </p>
+    <p>
+      这种结构带来可干预性。开发者可以检查模型在哪一步走偏，是问题理解错了、工具参数错了，
+      还是观察结果被错误解释了。对于工程系统来说，可解释性是可信 Agent 的基础。
+    </p>
+
+    <h2>工程实现：queryLoop 大循环</h2>
+    <p>
+      在工程实现中，ReAct 往往不是一个抽象概念，而是一个持续运行的 Agent Loop。
+      例如一个简化的 <code>queryLoop</code> 可以使用 <code>while (true)</code> 控制循环，
+      再用流式输出把模型的中间结果实时返回给前端或终端。
+    </p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/react/query-loop-cycle.png")} alt="queryLoop 中 Thought Action Observation 的代码循环" loading="lazy" />
+      <figcaption>Thought 负责判断是否需要工具，Action 执行工具，Observation 把结果写回上下文。</figcaption>
+    </figure>
+
+    <h3>Thought：思考与决策</h3>
+    <p>
+      系统把当前 messages、可用 tools 和约束传给模型。模型分析任务，如果需要外部信息，
+      就输出工具调用指令；如果不需要工具，说明任务可以结束，循环返回最终答案。
+    </p>
+
+    <h3>Action：执行工具</h3>
+    <p>
+      一旦检测到工具调用，系统会进入工具执行层，调用预定义的 <code>runTools</code>。
+      工具可以是搜索、Shell、文件读写、数据库查询或代码执行。工程上通常还要处理权限、超时、错误和并发。
+    </p>
+
+    <h3>Observation：状态更新</h3>
+    <p>
+      工具返回结果后，系统会把 assistant 的工具调用记录和 tool result 一起追加到 messages。
+      下一轮模型调用就能看到真实反馈，并基于反馈继续推理或修正计划。
+    </p>
+
+    <h2>工程中必须补上的保护机制</h2>
+    <ul>
+      <li><strong>最大轮数限制：</strong>避免模型不断调用错误工具，导致无限循环。</li>
+      <li><strong>错误捕获：</strong>工具失败时，把错误信息作为 Observation 返回，让模型有机会自我纠错。</li>
+      <li><strong>权限边界：</strong>高风险工具需要明确授权，不能让模型无约束执行破坏性操作。</li>
+      <li><strong>并发控制：</strong>多个工具调用可以并行，但需要限制数量、资源和超时时间。</li>
+      <li><strong>日志与追踪：</strong>记录每一轮 Thought、Action、Observation，便于调试和评测。</li>
+    </ul>
+
+    <h2>Claude Code 中 Action 的工具层</h2>
+    <p>
+      在代码 Agent 中，Action 的落地形式就是一组可调用工具。模型并不是直接改变世界，
+      而是通过工具层间接操作环境。工具的设计决定了 Agent 能做什么，也决定了它的风险边界。
+    </p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/react/claude-code-tools.png")} alt="Claude Code 中 queryLoop 调用 runTools 的工具分层" loading="lazy" />
+      <figcaption>工具返回值会成为下一轮 Thought 的 Observation 输入。</figcaption>
+    </figure>
+
+    <h3>执行层：直接操作环境</h3>
+    <p>
+      例如 <code>BashTool</code>、<code>PowerShellTool</code>、<code>REPLTool</code>、<code>SleepTool</code>。
+      它们让 Agent 能运行测试、安装依赖、执行脚本和验证算法逻辑。
+    </p>
+
+    <h3>文件层：读写代码库</h3>
+    <p>
+      例如 <code>FileReadTool</code>、<code>FileEditTool</code>、<code>FileWriteTool</code>、<code>GlobTool</code>、<code>GrepTool</code>。
+      修 Bug 时，Agent 通常先搜索错误位置，再读取上下文，最后做精确编辑。
+    </p>
+
+    <h3>信息层：获取外部知识</h3>
+    <p>
+      例如 <code>WebSearchTool</code>、<code>WebFetchTool</code>、<code>LSPTool</code>。
+      其中 LSP 能让 Agent 像 IDE 一样理解定义、引用和代码结构，而不只是处理纯文本。
+    </p>
+
+    <h3>编排层：启动子 Agent</h3>
+    <p>
+      例如 <code>AgentTool</code>、<code>TaskCreateTool</code>、<code>TaskGetTool</code>、<code>TodoWriteTool</code>。
+      当任务复杂到单一上下文难以承载时，主 Agent 可以拆分任务并调度子 Agent。
+    </p>
+
+    <h3>扩展层：MCP 协议</h3>
+    <p>
+      例如 <code>MCPTool</code>、<code>ListMcpResourcesTool</code>、<code>ToolSearchTool</code>、<code>McpAuthTool</code>。
+      MCP 让 Agent 可以接入数据库、文档系统、任务平台或企业内部 API。
+    </p>
+
+    <h2>小结</h2>
+    <p>
+      ReAct 可以理解为 Agent 系统的最小闭环：Thought 决定方向，Action 改变或查询环境，
+      Observation 带回真实反馈。只要这个闭环稳定，模型就不再只是聊天接口，而是可以逐步推进任务的执行系统。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/plan-and-execute/")}>Plan-and-Execute →</a>
+    </div>
+  </article>
+</NotesLayout>
