@@ -10,9 +10,11 @@ export const noteSections = [
     id: "agent-patterns",
     title: "Agent 范式",
     items: [
+      ["Agent 范式总览", "agent/design-patterns/"],
       ["ReAct", "agent/react/"],
       ["Plan-and-Execute", "agent/plan-and-execute/"],
       ["Reflection", "agent/reflection/"],
+      ["Workflow", "agent/workflow/"],
     ],
   },
   {

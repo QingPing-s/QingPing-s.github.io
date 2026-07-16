@@ -1,0 +1,89 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Workflow | 技术笔记" description="Workflow 与 Agent 的区别：固定流程、状态编排、条件分支和工程可控性。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 范式</p>
+      <h1>Workflow：把不确定任务放进可控流程</h1>
+      <p>
+        Workflow 是把任务拆成一组明确步骤，并用代码控制执行顺序、条件分支、状态流转和异常处理。
+        它不等于 Agent，但经常是生产级 Agent 系统的工程骨架。
+      </p>
+      <div class="article-meta"><span>Agent Workflow</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <aside class="callout">
+      <strong>一句话总结</strong>
+      <p>Workflow 偏确定性流程，Agent 偏动态决策；生产系统通常把两者结合起来：代码负责边界，LLM 负责语义判断。</p>
+    </aside>
+
+    <h2>Workflow 解决什么问题</h2>
+    <p>
+      最简单的 Agent 循环可以写成 <code>while(true)</code>：模型思考、调用工具、观察结果，然后继续。
+      这种开放循环很灵活，但在生产环境里不够稳定。Workflow 的作用是把关键路径显式化，
+      让系统知道每一步在做什么、什么时候可以继续、什么时候必须暂停或降级。
+    </p>
+
+    <h2>典型结构</h2>
+    <pre class="flow-code"><code>输入
+ ↓
+任务解析
+ ↓
+检索 / 工具调用
+ ↓
+结果验证
+ ├── 通过：生成答案
+ ├── 不足：重新检索或改写问题
+ └── 高风险：进入人工确认</code></pre>
+    <p>
+      这个结构里，LLM 可以参与任务解析、查询改写、结果判断和答案生成；
+      但执行顺序、权限边界和失败处理由 Workflow 控制。
+    </p>
+
+    <h2>Workflow 与 Agent 的区别</h2>
+    <div class="comparison-grid">
+      <div>
+        <h3>Workflow</h3>
+        <p>步骤相对固定，强调可控、可测试、可恢复。适合流程明确、风险较高或需要审计的任务。</p>
+      </div>
+      <div>
+        <h3>Agent</h3>
+        <p>根据目标和环境反馈动态决定下一步。适合路径不固定、需要探索、多工具组合的任务。</p>
+      </div>
+    </div>
+
+    <h2>常见 Workflow 节点</h2>
+    <ul>
+      <li><strong>Input Parser：</strong>解析用户目标、约束和输出格式。</li>
+      <li><strong>Planner：</strong>把目标拆成子任务或执行步骤。</li>
+      <li><strong>Retriever：</strong>从知识库、代码库或外部搜索中获取上下文。</li>
+      <li><strong>Tool Executor：</strong>执行数据库查询、脚本、API、浏览器或文件操作。</li>
+      <li><strong>Validator：</strong>检查结果是否满足格式、事实、权限和安全要求。</li>
+      <li><strong>Human Review：</strong>在高风险操作前暂停，等待人工确认。</li>
+    </ul>
+
+    <h2>为什么 LangGraph 适合 Workflow</h2>
+    <p>
+      LangGraph 用图来表达节点、边、条件分支和状态更新。它不是只能表达 DAG，
+      因为 Agent 系统里常见重试、反思、回退和人工介入，这些都会形成环。
+    </p>
+    <p>
+      这种图结构让 Workflow 不只是流程图，而是可以被运行、观察、测试和恢复的工程代码。
+      对复杂 Agent 来说，这比把所有逻辑塞进一个 prompt 或一个循环更可靠。
+    </p>
+
+    <h2>工程判断</h2>
+    <p>
+      如果任务步骤稳定，就先做 Workflow；如果某些步骤需要模型动态选择工具、改写查询或判断是否继续，
+      再在这些节点里引入 Agent 能力。这样系统既保留 LLM 的灵活性，也保留工程上的可控性。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/react/")}>ReAct →</a>
+    </div>
+  </article>
+</NotesLayout>

@@ -1,0 +1,248 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Agent 范式总览 | 技术笔记" description="从思考规划、工具执行、多智能体协同、流程控制与状态管理四个维度理解 Agent 范式。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 范式</p>
+      <h1>Agent 范式总览</h1>
+      <p>
+        大语言模型（LLM）本身本质上是一个基于上下文进行序列预测的模型，而“智能体（Agent）设计模式”
+        则是一套将 LLM 转化为能够感知环境、调用工具、管理状态并自主解决复杂问题的系统架构与工程方法。
+      </p>
+      <div class="article-meta"><span>Agent Patterns</span><span>约 14 分钟阅读</span></div>
+    </header>
+
+    <p>
+      随着业界的不断探索，例如 Agentic Workflows，以及 LangChain、LangGraph、LlamaIndex 等框架的持续沉淀，
+      Agent 的常见设计模式目前可以从以下四个维度进行归纳。
+    </p>
+
+    <h2>一、思考与规划模式</h2>
+    <p>这一类模式主要解决 Agent <strong>如何理解目标、拆解任务并决定行动路线</strong> 的问题。</p>
+
+    <h3>1. ReAct（Reasoning and Acting）模式</h3>
+    <ul>
+      <li><strong>机制：</strong>推理（Thought）、行动（Action）与观察（Observation）交替进行，Agent 根据工具执行结果动态决定下一步操作。</li>
+      <li><strong>适用场景：</strong>需要多步信息收集的查询任务、动态工具调用、故障排查以及短链路任务。</li>
+      <li><strong>局限：</strong>面对长周期任务时，如果所有推理、工具调用和历史结果都积累在同一个循环中，模型容易出现目标漂移、重复调用工具或陷入死循环。</li>
+    </ul>
+    <pre class="flow-code"><code>Thought → Action → Observation → Thought → ... → Final Answer</code></pre>
+
+    <h3>2. 计划与执行（Plan-and-Execute）模式</h3>
+    <ul>
+      <li><strong>机制：</strong>将“全局规划”和“具体执行”解耦。Planner 将宏观目标拆解为多个具体子任务，再由 Executor 逐步完成。</li>
+      <li><strong>适用场景：</strong>长周期、多步骤的复杂任务，例如包含资料调研、内容起草、事实核查和最终润色的长篇报告。</li>
+      <li><strong>局限：</strong>初始计划可能存在偏差，因此生产级系统通常还会加入 Replanning 机制，根据中间执行结果动态修改后续计划。</li>
+    </ul>
+    <pre class="flow-code"><code>用户目标
+   ↓
+Planner：生成任务计划
+   ↓
+Executor：逐步执行
+   ↓
+Replanner：根据中间结果调整计划</code></pre>
+
+    <h3>3. 反思与纠错（Reflection / Critic / Reflexion）模式</h3>
+    <ul>
+      <li><strong>机制：</strong>在输出最终答案或执行重要操作前，引入检查、评论或验证过程，对当前结果进行评估；如果发现错误，则重新生成或修改。</li>
+      <li><strong>常见形式：</strong>Self-Reflection、Generator-Critic、Reflexion。</li>
+      <li><strong>适用场景：</strong>对准确率要求较高的代码生成、数学推理、逻辑分析、SQL 生成和复杂决策任务。</li>
+      <li><strong>局限：</strong>如果生成者和评论者使用相同模型、相同上下文，可能产生相似偏差，因此通常需要结合规则校验、测试程序或外部验证器。</li>
+    </ul>
+    <p>
+      Reflexion 的关键是把失败原因转化为语言形式的经验，并保存到记忆中，用于指导后续尝试。
+    </p>
+
+    <h2>二、工具与执行模式</h2>
+    <p>这一类模式主要解决 Agent <strong>如何选择工具、获取外部信息并对真实系统产生操作</strong> 的问题。</p>
+
+    <h3>1. 工具选择与路由（Tool Selection / Router）</h3>
+    <ul>
+      <li><strong>机制：</strong>LLM 作为决策中枢，根据用户意图和当前任务状态，从预设工具库中选择一个或多个工具，并生成结构化参数，再由外部程序执行真实操作。</li>
+      <li><strong>常见实现方式：</strong>Function Calling、Structured Output、JSON Schema、MCP 工具协议、自定义 Tool Registry。</li>
+    </ul>
+    <pre class="flow-code"><code>用户请求
+   ↓
+LLM 判断任务类型
+   ↓
+选择工具并生成参数
+   ↓
+本地程序执行
+   ↓
+结果返回给 LLM</code></pre>
+    <p>需要注意的是，Function Calling 本身更接近一种底层工具调用机制，而 Router 才是一种完整的系统设计模式。</p>
+
+    <h3>2. Agentic RAG（智能体式检索增强生成）</h3>
+    <ul>
+      <li><strong>机制：</strong>将知识库检索作为 Agent 可以自主选择的一种工具。Agent 不仅执行检索，还会决定是否需要检索、检索哪些关键词、结果是否足够以及是否需要重新检索。</li>
+      <li><strong>适用场景：</strong>企业知识库问答、科研检索、代码仓库分析、法律文档分析和需要多轮搜索的复杂问题。</li>
+    </ul>
+    <pre class="flow-code"><code>普通 RAG：用户问题 → 固定检索 → 生成答案
+
+Agentic RAG：
+用户问题
+   ↓
+判断是否需要检索
+   ↓
+生成或改写检索词
+   ↓
+执行检索
+   ↓
+评估召回结果
+   ├── 不充分：重新检索
+   └── 充分：生成答案</code></pre>
+    <p>普通 RAG 更接近固定的数据处理流程，而 Agentic RAG 才更具有明显的 Agent 决策特征。</p>
+
+    <h3>3. 环境操作与代码执行</h3>
+    <p>除了检索，Agent 还可以通过工具直接作用于外部环境，例如：</p>
+    <ul>
+      <li>调用数据库；</li>
+      <li>执行 Python 或 Shell 命令；</li>
+      <li>操作文件系统；</li>
+      <li>调用浏览器；</li>
+      <li>操作桌面软件；</li>
+      <li>创建日程或发送邮件；</li>
+      <li>调用企业内部 API。</li>
+    </ul>
+    <p>这类模式的核心并不是让 LLM 自己执行操作，而是让 LLM 负责决策，由受控程序、工具服务或沙箱环境完成真实执行。</p>
+
+    <h2>三、多智能体协同模式</h2>
+    <p>当单个 Agent 的上下文容量、专业能力或并行处理能力达到瓶颈时，可以使用多个 Agent 进行分工合作。</p>
+
+    <h3>1. 主管分发模式（Supervisor / Hierarchical）</h3>
+    <ul>
+      <li><strong>机制：</strong>由 Supervisor Agent 负责理解用户目标、拆解任务、选择专业 Agent、监控执行状态并汇总最终结果。</li>
+      <li><strong>适用场景：</strong>大型代码开发、复杂研究、多领域分析和需要多个专业角色共同参与的任务。</li>
+    </ul>
+    <pre class="flow-code"><code>Supervisor
+├── Research Agent
+├── Coding Agent
+├── Data Agent
+└── Review Agent</code></pre>
+    <p>Supervisor 通常主要负责规划、调度和结果汇总，但并不意味着它绝对不执行具体任务；对于简单问题，它也可以直接处理。</p>
+
+    <h3>2. 流水线模式（Sequential / Chain）</h3>
+    <ul>
+      <li><strong>机制：</strong>多个 Agent 按照预先定义的顺序依次执行，上一个 Agent 的输出作为下一个 Agent 的输入。</li>
+      <li><strong>适用场景：</strong>流程固定、阶段边界明确的任务，例如内容生产、代码审查、报告生成和数据分析。</li>
+      <li><strong>局限：</strong>前序 Agent 的错误可能持续传递到后续节点，因此通常需要在关键阶段增加验证器或回退分支。</li>
+    </ul>
+    <pre class="flow-code"><code>调研 Agent
+   ↓
+撰写 Agent
+   ↓
+事实核查 Agent
+   ↓
+润色 Agent</code></pre>
+
+    <h3>3. 并行工作者模式（Parallel Workers）</h3>
+    <ul>
+      <li><strong>机制：</strong>多个 Agent 同时处理不同子任务或从不同角度探索同一个问题，最后由 Aggregator 汇总结果。</li>
+      <li><strong>适用场景：</strong>深度研究、多来源搜索、多方案比较以及可以并行拆分的复杂任务。</li>
+      <li><strong>优势：</strong>可以减少串行等待时间，同时提升信息覆盖范围。</li>
+      <li><strong>局限：</strong>会增加 Token 消耗、通信成本和结果去重难度。</li>
+    </ul>
+    <pre class="flow-code"><code>              ┌→ Agent A：技术角度
+用户问题 → 拆分器 ├→ Agent B：商业角度 → Aggregator
+              └→ Agent C：风险角度</code></pre>
+
+    <h3>4. 辩论模式（Debate）</h3>
+    <ul>
+      <li><strong>机制：</strong>多个 Agent 分别提出不同观点，并通过互相质疑、补充证据和反驳进行多轮讨论，最终由 Judge 或 Aggregator 选择较优结论。</li>
+      <li><strong>适用场景：</strong>存在多种合理观点的决策任务、逻辑推理以及需要降低单一视角偏差的场景。</li>
+      <li><strong>局限：</strong>辩论过程并不能天然保证答案正确，也可能出现多个 Agent 共享同一种模型偏差的问题。</li>
+    </ul>
+
+    <h3>5. Swarm / Handoff 模式</h3>
+    <ul>
+      <li><strong>机制：</strong>多个 Agent 不一定由固定主管统一控制，而是根据当前任务状态，将任务动态转交给更合适的 Agent。</li>
+    </ul>
+    <pre class="flow-code"><code>客服 Agent
+   ↓ Handoff
+退款 Agent
+   ↓ Handoff
+风险审核 Agent</code></pre>
+    <p>Swarm 更强调动态协作和任务交接，而 Debate 更强调围绕同一问题进行观点竞争，两者并不是同一种模式。</p>
+
+    <h2>四、流程控制与状态管理</h2>
+    <p>这是目前工程界，尤其是企业级 Agent 应用中非常重要的一类设计模式。</p>
+
+    <h3>1. 状态机 / 有向图模式（State Machine / Directed Graph）</h3>
+    <ul>
+      <li><strong>机制：</strong>由于完全由 LLM 主导的开放循环，例如最基础的 <code>while(true)</code> ReAct，在生产环境中过于不可控，因此开发者使用状态机或有向图显式规定任务节点、状态变化、条件分支和异常处理逻辑。</li>
+    </ul>
+    <pre class="flow-code"><code>输入
+ ↓
+任务解析
+ ↓
+工具执行
+ ↓
+结果验证
+ ├── 通过：输出结果
+ └── 失败：重新执行或进入人工审批</code></pre>
+    <p>需要注意的是，LangGraph 所使用的是有向图，而不一定是有向无环图（DAG）。因为 Agent 工作流通常需要重试、反思和回退，这些流程天然会形成环。</p>
+
+    <h3>2. Human-in-the-loop（人类介入）</h3>
+    <ul>
+      <li><strong>机制：</strong>在删除数据、发送邮件、提交代码、支付和修改生产环境等高风险操作前暂停执行，由用户进行确认。</li>
+      <li><strong>作用：</strong>降低不可逆操作风险，防止权限滥用，允许人工修正模型决策，并满足企业审计要求。</li>
+    </ul>
+
+    <h3>3. Checkpoint 与任务恢复</h3>
+    <ul>
+      <li><strong>机制：</strong>在关键节点保存当前状态，使任务即使因为进程退出、网络异常或工具失败而中断，也可以从最近状态继续执行。</li>
+    </ul>
+    <pre class="flow-code"><code>当前目标
+任务计划
+已完成步骤
+工具执行结果
+错误信息
+重试次数
+用户审批状态</code></pre>
+
+    <h3>4. Retry、Fallback 与异常分支</h3>
+    <p>生产级 Agent 不能只设计成功路径，还需要明确处理：</p>
+    <ul>
+      <li>工具调用失败；</li>
+      <li>模型输出格式错误；</li>
+      <li>检索结果不足；</li>
+      <li>网络超时；</li>
+      <li>权限不足；</li>
+      <li>超出最大循环次数；</li>
+      <li>验证结果不通过。</li>
+    </ul>
+    <p>Graph 模式的价值不仅是画出执行流程，更重要的是将异常、重试和降级策略变成可观察、可测试的代码逻辑。</p>
+
+    <h2>总结</h2>
+    <p>总体而言，Agent 的设计模式可以从四个维度理解：</p>
+    <ul>
+      <li><strong>思考与规划模式</strong>决定 Agent 如何理解目标、拆解任务和修正计划；</li>
+      <li><strong>工具与执行模式</strong>决定 Agent 如何获取外部信息并执行真实操作；</li>
+      <li><strong>多智能体协同模式</strong>决定多个 Agent 如何分工、通信和汇总结果；</li>
+      <li><strong>流程控制与状态管理模式</strong>决定整个系统如何保持稳定、可恢复和可审计。</li>
+    </ul>
+    <p>
+      Agent 的演进正在从早期“将大部分自由度交给 LLM 的开放式循环”，逐渐走向
+      “确定性控制流与概率性模型决策结合”的混合架构。
+    </p>
+    <pre class="flow-code"><code>代码负责流程、权限和异常边界
+LLM 负责语义理解、规划和复杂判断
+工具负责真实执行
+状态机负责流程流转
+记忆系统负责保存有效信息
+评测器负责验证最终质量</code></pre>
+    <p>
+      因此，生产级 Agent 并不是一个可以无限自主运行的纯黑盒，而是一个由代码约束执行边界、
+      由 LLM 处理不确定性任务的灰盒系统。这种“确定性工程控制 + 概率性模型推理”的混合架构，
+      正在成为企业级 Agent 系统的主流方向。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/workflow/")}>Workflow →</a>
+    </div>
+  </article>
+</NotesLayout>
