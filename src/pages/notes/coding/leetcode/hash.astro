@@ -31,10 +31,10 @@ import { sitePath } from "../../../../lib/site.js";
       <li><code>complement</code> 表示当前数字需要补上的另一个数。</li>
       <li>命中后返回 <code>[hash_map[complement], i]</code>。</li>
     </ul>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260704112605.png</code>。</p>
-    </aside>
+    <figure class="article-figure">
+      <img src={sitePath("notes/leetcode/two-sum.png")} alt="两数之和哈希表解法笔记截图" loading="lazy" />
+      <figcaption>两数之和：哈希表记录已遍历数字和下标。</figcaption>
+    </figure>
 
     <h2><a href="https://leetcode.cn/problems/group-anagrams/" target="_blank" rel="noreferrer">49. 字母异位词分组</a> <small>中等</small></h2>
     <p>给一组字符串，把字母组成相同的字符串分到同一组。</p>
@@ -53,10 +53,10 @@ import { sitePath } from "../../../../lib/site.js";
       <li><code>hash_map.values()</code> 用于取出所有 value。</li>
       <li>进阶版本可以使用 <code>defaultdict(list)</code>。</li>
     </ul>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260704115304.png</code>。</p>
-    </aside>
+    <figure class="article-figure compact">
+      <img src={sitePath("notes/leetcode/group-anagrams.png")} alt="字母异位词分组哈希解法笔记截图" loading="lazy" />
+      <figcaption>字母异位词分组：排序后的字符串作为哈希 key。</figcaption>
+    </figure>
 
     <h2><a href="https://leetcode.cn/problems/longest-consecutive-sequence/" target="_blank" rel="noreferrer">128. 最长连续序列</a> <small>中等</small></h2>
     <p>
@@ -70,10 +70,10 @@ import { sitePath } from "../../../../lib/site.js";
       <li>最长连续序列中重复数字不算，所以可以使用集合去重。</li>
       <li>看似是两层循环，其实只有起点才会进入 <code>while</code> 循环。</li>
     </ul>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260704232224.png</code>。</p>
-    </aside>
+    <figure class="article-figure compact">
+      <img src={sitePath("notes/leetcode/longest-consecutive.png")} alt="最长连续序列集合解法笔记截图" loading="lazy" />
+      <figcaption>最长连续序列：只从序列起点开始向后扩展。</figcaption>
+    </figure>
 
     <div class="article-next">
       <span>继续阅读</span>

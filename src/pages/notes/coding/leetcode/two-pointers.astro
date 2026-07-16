@@ -20,10 +20,10 @@ import { sitePath } from "../../../../lib/site.js";
     <p><strong>注意：</strong>必须在不复制数组的情况下，原地对数组进行操作。</p>
     <h3>思路</h3>
     <p>等于零的时候，利用双指针的不同位置来移动元素。一个指针扫描数组，另一个指针维护下一个非零元素应该放置的位置。</p>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260705232332.png</code>。</p>
-    </aside>
+    <figure class="article-figure">
+      <img src={sitePath("notes/leetcode/move-zeroes.png")} alt="移动零双指针解法笔记截图" loading="lazy" />
+      <figcaption>移动零：扫描指针和写入指针分工。</figcaption>
+    </figure>
 
     <h2><a href="https://leetcode.cn/problems/3sum/" target="_blank" rel="noreferrer">15. 三数之和</a> <small>中等</small></h2>
     <p>
@@ -35,20 +35,20 @@ import { sitePath } from "../../../../lib/site.js";
     <p><strong>注意：</strong>答案中不可以包含重复的三元组。</p>
     <h3>暴力法</h3>
     <p>三层循环枚举所有三元组，时间复杂度是 <code>O(n^3)</code>。</p>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260705233947.png</code>。</p>
-    </aside>
+    <figure class="article-figure">
+      <img src={sitePath("notes/leetcode/three-sum-bruteforce.png")} alt="三数之和暴力法笔记截图" loading="lazy" />
+      <figcaption>三数之和：暴力枚举三元组的思路。</figcaption>
+    </figure>
     <h3>双指针</h3>
     <p>
       先把数组排序成有序数组，再固定一个元素，利用左右两个指针移动寻找目标。
       如果当前和大于目标值，就调小；如果小于目标值，就调大；始终保持左指针小于右指针。
     </p>
     <p>排序后可以更方便地跳过重复元素，避免答案中出现重复三元组。整体复杂度通常为 <code>O(n^2)</code>。</p>
-    <aside class="callout">
-      <strong>原笔记截图</strong>
-      <p>Obsidian 原文包含截图：<code>Pasted image 20260705234320.png</code>。</p>
-    </aside>
+    <figure class="article-figure">
+      <img src={sitePath("notes/leetcode/three-sum-two-pointers.png")} alt="三数之和双指针解法笔记截图" loading="lazy" />
+      <figcaption>三数之和：排序后固定一个数，再用左右指针夹逼。</figcaption>
+    </figure>
 
     <h2><a href="https://leetcode.cn/problems/container-with-most-water/" target="_blank" rel="noreferrer">11. 盛最多水的容器</a> <small>难</small></h2>
     <p>原笔记中已记录题目入口，后续可以继续补充双指针移动规则和面积计算复盘。</p>
