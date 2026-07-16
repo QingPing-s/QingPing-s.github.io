@@ -3,7 +3,7 @@ import NotesLayout from "../../../layouts/NotesLayout.astro";
 import { placeholderNotes } from "../../../lib/notes.js";
 
 export function getStaticPaths() {
-  const existing = new Set(["agent-harness"]);
+  const existing = new Set(["agent-harness", "ai-concept-coordinate-system"]);
   return Object.entries(placeholderNotes)
     .filter(([key]) => key.startsWith("agent/") && !existing.has(key.split("/")[1]))
     .map(([key, note]) => ({ params: { slug: key.split("/")[1] }, props: { note } }));

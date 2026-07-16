@@ -2,6 +2,13 @@ import { sitePath } from "./site.js";
 
 export const noteSections = [
   {
+    id: "concepts",
+    title: "AI 概念坐标系",
+    items: [
+      ["AI 概念坐标系", "agent/ai-concept-coordinate-system/"],
+    ],
+  },
+  {
     id: "agent",
     title: "Agent 基础",
     items: [
