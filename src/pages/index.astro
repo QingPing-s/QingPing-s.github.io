@@ -2,14 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { sitePath } from "../lib/site.js";
 
-const skills = [
-  "LangGraph",
-  "RAG",
-  "Agent Memory",
-  "Multi-Agent",
-  "FastAPI",
-];
-
 const latestPost = {
   href: sitePath("notes/rag/weighted-rrf/"),
   title: "从消融实验看 Hybrid Retrieval：Weighted RRF 为什么没有赢过 Keyword",
@@ -19,8 +11,8 @@ const latestPost = {
 ---
 
 <BaseLayout
-  title="QingPing’s tech blog"
-  description="QingPing’s tech blog 记录技术学习、项目实践、工程踩坑，写给未来的自己，也写给同样在探索 AI 的人。"
+  title="QingPing’s Tech Blog"
+  description="QingPing’s Tech Blog 记录技术学习、项目实践、工程踩坑，写给未来的自己，也写给同样在探索 AI 的人。"
 >
   <section class="profile-hero">
     <video class="profile-hero-video" autoplay muted loop playsinline aria-hidden="true">
@@ -28,8 +20,7 @@ const latestPost = {
     </video>
     <div class="profile-hero-inner">
       <div class="profile-hero-copy">
-        <p class="eyebrow">AI Agent / RAG / Multi-Agent Systems</p>
-        <h1>QingPing’s tech blog</h1>
+        <h1>QingPing’s Tech Blog</h1>
         <p class="profile-copy">
           记录技术学习、项目实践、工程踩坑，写给未来的自己，也写给同样在探索 AI 的人。
         </p>
@@ -43,9 +34,6 @@ const latestPost = {
           <p>{latestPost.description}</p>
           <small>{latestPost.meta}</small>
         </a>
-        <div class="chips profile-tags" aria-label="技术标签">
-          {skills.map((skill) => <span>{skill}</span>)}
-        </div>
       </div>
     </div>
   </section>
