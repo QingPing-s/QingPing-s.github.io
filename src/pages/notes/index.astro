@@ -1,6 +1,6 @@
 ---
 import NotesLayout from "../../layouts/NotesLayout.astro";
-import { noteHref, noteSections } from "../../lib/notes.js";
+import { noteHref, noteSections, standaloneNotes } from "../../lib/notes.js";
 ---
 
 <NotesLayout
@@ -13,6 +13,13 @@ import { noteHref, noteSections } from "../../lib/notes.js";
       <h1>技术笔记</h1>
       <p>按学习路径整理 AI Agent 工程、科研和编程基础。暂未展开的主题先保留简洁占位页。</p>
     </header>
+    <div class="notes-featured-links">
+      {
+        standaloneNotes.map(([label, path]) => (
+          <a href={noteHref(path)}>{label}</a>
+        ))
+      }
+    </div>
     <div class="notes-directory-grid">
       {
         noteSections.map((section) => (

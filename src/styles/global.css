@@ -749,6 +749,12 @@ h3 {
   color: var(--teal-dark);
 }
 
+.notes-nav-standalone {
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-weight: 850;
+}
+
 .notes-content {
   min-width: 0;
   overflow: hidden;
@@ -771,6 +777,26 @@ h3 {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.notes-featured-links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8px 0 24px;
+  gap: 10px;
+}
+
+.notes-featured-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--teal-dark);
+  font-weight: 850;
+  box-shadow: var(--shadow-sm);
 }
 
 .notes-directory-card {

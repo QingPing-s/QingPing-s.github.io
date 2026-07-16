@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { noteHref, noteSections } from "../lib/notes.js";
+import { noteHref, noteSections, standaloneNotes } from "../lib/notes.js";
 
 const {
   title = "技术笔记 | QingPing-s",
@@ -16,6 +16,17 @@ const notesIndexPath = noteHref("").replace(/\/$/, "");
       <details class="notes-sidebar-panel" open data-notes-sidebar>
         <summary>技术笔记</summary>
         <nav class="notes-nav">
+          {
+            standaloneNotes.map(([label, path]) => {
+              const href = noteHref(path);
+              const active = currentPath === href.replace(/\/$/, "");
+              return (
+                <a class:list={["notes-nav-standalone", { active }]} href={href}>
+                  {label}
+                </a>
+              );
+            })
+          }
           {
             noteSections.map((section, sectionIndex) => {
               const sectionActive = section.items.some(([, path]) => {
