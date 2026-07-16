@@ -54,10 +54,24 @@ import { sitePath } from "../../../lib/site.js";
       模型再根据 Observation 决定继续推进还是结束任务。
     </p>
 
-    <figure class="article-figure">
-      <img src={sitePath("notes/agent/agent-loop.png")} alt="Agent 的 Reasoning Action Observation 运行机制" loading="lazy" />
-      <figcaption>Agent 的重点是系统闭环，而不是单次模型输出。</figcaption>
-    </figure>
+    <div class="flow-list" aria-label="Agent 运行机制">
+      <div>
+        <strong>1. Reasoning</strong>
+        <p>LLM 理解目标、读取 State 和上下文，判断当前缺什么信息或需要执行什么动作。</p>
+      </div>
+      <div>
+        <strong>2. Action</strong>
+        <p>模型生成工具调用意图，Runtime 校验参数和权限后执行对应工具。</p>
+      </div>
+      <div>
+        <strong>3. Observation</strong>
+        <p>工具返回真实结果，系统把结果写回 messages / state，成为下一轮推理依据。</p>
+      </div>
+      <div>
+        <strong>4. Continue / Final Answer</strong>
+        <p>如果信息不足继续循环；如果目标完成，则输出最终答案。</p>
+      </div>
+    </div>
 
     <h2>Agent 和 Workflow 的区别</h2>
     <p>
@@ -83,10 +97,24 @@ import { sitePath } from "../../../lib/site.js";
       读写权限区分、人工确认、沙箱隔离、超时控制、失败重试和日志审计。
     </p>
 
-    <figure class="article-figure">
-      <img src={sitePath("notes/agent/tool-calling.png")} alt="LLM Runtime Tool 三层工具调用边界" loading="lazy" />
-      <figcaption>LLM 决定调用意图，Runtime 校验与执行，Tool 返回真实结果。</figcaption>
-    </figure>
+    <div class="flow-list" aria-label="工具调用安全边界">
+      <div>
+        <strong>LLM：生成调用意图</strong>
+        <p>决定是否需要工具、调用哪个工具，以及给出候选参数；它不直接执行高风险操作。</p>
+      </div>
+      <div>
+        <strong>Runtime：控制执行边界</strong>
+        <p>负责工具白名单、schema 校验、权限判断、人工确认、超时、重试、沙箱和审计日志。</p>
+      </div>
+      <div>
+        <strong>Tool：返回真实结果</strong>
+        <p>工具只执行被授权的操作，并把结果、错误或降级信息返回给 Agent。</p>
+      </div>
+      <div>
+        <strong>State / Trace：沉淀过程</strong>
+        <p>记录调用参数、执行结果、失败原因和后续决策，便于回放、调试和评估。</p>
+      </div>
+    </div>
 
     <h2>记忆如何实现</h2>
     <p>
