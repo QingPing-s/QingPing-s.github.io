@@ -1,0 +1,70 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Multi-Agent | 技术笔记"
+  description="LangGraph 中如何用子图和工作流模式组织多 Agent 系统。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LangGraph</p>
+      <h1>Multi-Agent</h1>
+      <p>
+        LangGraph 的多 Agent 设计通常不是让多个模型随意聊天，而是用图结构、子图和明确状态接口组织协作。
+        每个 Agent 或子流程可以负责一个清晰职责。
+      </p>
+      <div class="article-meta"><span>Subgraphs</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>为什么用 LangGraph 做多 Agent</h2>
+    <p>
+      多 Agent 系统容易失控：上下文膨胀、角色边界模糊、消息来回传递、成本上升。
+      LangGraph 的价值在于把协作关系显式建模成图，定义谁负责什么、状态如何传递、何时终止。
+    </p>
+
+    <h2>Subgraph 的作用</h2>
+    <p>
+      官方文档把 subgraph 定义为“作为另一个 graph 中节点使用的 graph”。它适合构建多 Agent 系统、
+      复用一组节点，或者让不同团队独立开发图的一部分。
+    </p>
+
+    <h2>两种通信方式</h2>
+    <ul>
+      <li><strong>在节点中调用子图：</strong>父图和子图状态 schema 不同时，节点负责状态转换。这适合让每个 Agent 保留自己的私有消息历史。</li>
+      <li><strong>把子图作为节点加入：</strong>父图和子图共享状态 key 时，可以直接把编译后的子图作为节点加入。</li>
+    </ul>
+
+    <h2>常见多 Agent 模式</h2>
+    <ul>
+      <li><strong>Supervisor / Worker：</strong>Supervisor 拆任务并路由，Worker 执行专门任务。</li>
+      <li><strong>Planner / Executor：</strong>Planner 负责计划，Executor 负责工具执行和验证。</li>
+      <li><strong>Researcher / Writer / Reviewer：</strong>不同角色围绕内容生产协作。</li>
+      <li><strong>Specialist Agents：</strong>每个 Agent 负责不同工具域，例如 SQL、RAG、代码、浏览器。</li>
+    </ul>
+
+    <h2>工程边界</h2>
+    <p>
+      多 Agent 不是越多越好。只有当任务天然需要角色隔离、工具隔离、状态隔离或并行执行时，才值得引入。
+      否则单 Agent + 条件路由往往更简单、更稳定。
+    </p>
+
+    <h2>评估重点</h2>
+    <p>
+      多 Agent 评估不仅看最终答案，还要看任务分配是否合理、消息是否冗余、子 Agent 是否重复工作、
+      失败能否被 supervisor 捕获，以及成本和延迟是否可接受。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/use-subgraphs">Subgraphs</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">Workflows and agents</a>
+    </div>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/langgraph/retry-fallback/")}>Retry 与降级 →</a>
+    </div>
+  </article>
+</NotesLayout>

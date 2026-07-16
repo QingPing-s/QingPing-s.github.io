@@ -1,0 +1,61 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Conditional Edge | 技术笔记"
+  description="LangGraph 条件边如何根据 State 实现动态路由、分支、循环和人工介入。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LangGraph</p>
+      <h1>Conditional Edge</h1>
+      <p>
+        Conditional Edge 是 LangGraph 做动态控制流的关键。它把“下一步去哪”从节点内部抽出来，
+        让路由规则成为图结构的一部分。
+      </p>
+      <div class="article-meta"><span>Routing</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>为什么需要条件边</h2>
+    <p>
+      Agent 工作流不总是线性的。解析失败要终止，低置信度要转人工，工具失败要重试，
+      信息不足要继续检索，任务完成要结束。Conditional Edge 负责把这些分支显式化。
+    </p>
+
+    <h2>路由依据</h2>
+    <p>条件边通常读取 State，并返回一个路由标签或下一个节点名称。</p>
+    <ul>
+      <li><strong>状态字段：</strong>例如 status、error_count、confidence、needs_review。</li>
+      <li><strong>模型输出：</strong>例如 intent、classification、tool_required。</li>
+      <li><strong>工具结果：</strong>例如检索是否命中、API 是否失败、测试是否通过。</li>
+      <li><strong>业务规则：</strong>例如权限不足转人工，高风险操作等待审批。</li>
+    </ul>
+
+    <h2>适合的场景</h2>
+    <ul>
+      <li><strong>分类路由：</strong>根据用户意图进入不同处理节点。</li>
+      <li><strong>错误恢复：</strong>失败后进入 retry、fallback 或 human review。</li>
+      <li><strong>循环控制：</strong>信息不足时继续检索，足够时生成答案。</li>
+      <li><strong>终止条件：</strong>任务完成、达到最大轮数或风险过高时结束。</li>
+    </ul>
+
+    <h2>工程建议</h2>
+    <p>
+      条件边的函数应该尽量小而确定。不要在路由函数里做昂贵的 LLM 调用或复杂副作用；
+      让上游节点把决策结果写入 State，条件边只负责读取状态并选择下一步。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/graph-api">Graph API overview</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">Workflows and agents</a>
+    </div>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/langgraph/checkpoint/")}>Checkpoint →</a>
+    </div>
+  </article>
+</NotesLayout>

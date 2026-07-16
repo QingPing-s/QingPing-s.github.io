@@ -1,0 +1,66 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="StateGraph | 技术笔记"
+  description="LangGraph StateGraph 的核心概念：State、Node、Edge 以及为什么它适合构建有状态 Agent。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LangGraph</p>
+      <h1>StateGraph</h1>
+      <p>
+        LangGraph 的核心是把 Agent 工作流建模成图。StateGraph 通过共享 State、执行 Node、连接 Edge，
+        让一个长任务可以被拆成可观察、可恢复、可路由的步骤。
+      </p>
+      <div class="article-meta"><span>Graph API</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>StateGraph 解决什么问题</h2>
+    <p>
+      传统链式调用更像固定流水线，而 Agent 任务往往需要分支、循环、人工介入、失败恢复和状态持久化。
+      StateGraph 让这些控制逻辑显式出现在图结构里，而不是藏在一个很大的函数中。
+    </p>
+
+    <h2>三个基本组件</h2>
+    <ul>
+      <li><strong>State：</strong>应用当前快照，通常用共享 schema 定义，节点从中读取并写回更新。</li>
+      <li><strong>Node：</strong>执行具体逻辑的函数，可以调用 LLM、工具、数据库，也可以只是普通代码。</li>
+      <li><strong>Edge：</strong>决定下一个节点是谁，可以是固定转移，也可以是条件分支。</li>
+    </ul>
+
+    <h2>为什么 State 很关键</h2>
+    <p>
+      Agent 不是单次函数调用，而是多轮状态演化。State 记录任务目标、消息、工具结果、错误、阶段、人工审批状态等信息。
+      图中每个节点都围绕 State 工作，后续路由和恢复也依赖 State。
+    </p>
+
+    <h2>典型构建流程</h2>
+    <ol>
+      <li>定义 State schema，明确工作流需要保存哪些字段。</li>
+      <li>把任务拆成多个 Node，每个 Node 只负责一个清晰步骤。</li>
+      <li>用 Edge 描述节点之间的固定流转。</li>
+      <li>用 Conditional Edge 描述分支、循环、终止和人工介入。</li>
+      <li>编译 graph，并按需要接入 checkpointer、retry、streaming 和 tracing。</li>
+    </ol>
+
+    <h2>工程判断</h2>
+    <p>
+      如果任务只有一次 LLM 调用，不一定需要 LangGraph；如果任务需要多步骤、状态、分支、失败恢复或人工确认，
+      StateGraph 能把复杂控制流显式化，方便测试、调试和上线。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/graph-api">Graph API overview</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph">Thinking in LangGraph</a>
+    </div>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/langgraph/node-edge/")}>Node 与 Edge →</a>
+    </div>
+  </article>
+</NotesLayout>

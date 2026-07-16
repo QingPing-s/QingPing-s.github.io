@@ -1,0 +1,56 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Embedding 与向量数据库 | 技术笔记" description="RAG 中 Embedding、向量数据库、metadata 和索引管理的核心概念。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>Embedding 与向量数据库</h1>
+      <p>Embedding 把文本转换成向量表示，向量数据库负责存储这些向量并支持相似度检索。两者共同决定 RAG 能否召回正确证据。</p>
+      <div class="article-meta"><span>Retrieval Infra</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>Embedding 在 RAG 中的位置</h2>
+    <p>离线阶段，每个 chunk 会被 embedding 成向量并写入向量数据库；在线阶段，用户问题也会被 embedding 成向量，用于召回相似 chunk。</p>
+
+    <h2>为什么模型选择重要</h2>
+    <p>Embedding 模型决定语义检索质量。如果模型不能表达业务语言、专业术语或中英文混合语义，检索结果就会偏，后面的 LLM 再强也难以答对。</p>
+
+    <h2>Embedding 模型选择标准</h2>
+    <ul>
+      <li><strong>语言能力：</strong>中文、英文或多语言场景要选择匹配的 embedding 模型。</li>
+      <li><strong>领域适配：</strong>法律、医疗、代码、金融等领域需要关注专业术语表现。</li>
+      <li><strong>向量维度与成本：</strong>维度越高不一定越好，还会影响存储、检索速度和成本。</li>
+      <li><strong>评测结果：</strong>用自己的 query 与文档集评估 Recall@K、MRR、NDCG。</li>
+    </ul>
+
+    <h2>向量数据库存什么</h2>
+    <p>向量数据库不只存向量，还应存原文片段、来源、标题、页码、章节、更新时间、权限标签等 metadata。Metadata 决定过滤、引用和追溯能力。</p>
+
+    <h2>相似度检索</h2>
+    <p>常见相似度计算包括余弦相似度、内积和欧氏距离。用户问题向量会和库中 chunk 向量计算相似度，返回最相近的 Top-K 结果。</p>
+
+    <h2>常见选择</h2>
+    <ul>
+      <li><strong>FAISS：</strong>本地向量检索库，适合 demo、实验和轻量离线评测。</li>
+      <li><strong>Chroma：</strong>上手快，适合本地知识库和原型项目。</li>
+      <li><strong>Milvus：</strong>面向更大规模向量检索场景。</li>
+      <li><strong>OpenSearch / Elasticsearch：</strong>适合同时支持关键词与向量检索的系统。</li>
+    </ul>
+
+    <h2>工程注意点</h2>
+    <ul>
+      <li>文档和 query 必须使用同一 embedding 模型和兼容版本。</li>
+      <li>模型版本更新后要重建索引，避免线上结果漂移。</li>
+      <li>文档更新后要处理增量同步、删除和重建索引。</li>
+      <li>权限过滤应尽量在检索阶段完成，而不是生成阶段才补救。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/rag/retrieval-ranking/")}>检索与排序 →</a>
+    </div>
+  </article>
+</NotesLayout>

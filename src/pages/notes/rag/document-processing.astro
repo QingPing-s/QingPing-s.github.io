@@ -1,0 +1,57 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="文档处理与 Chunking | 技术笔记" description="RAG 中如何解析资料、清洗文本、保留 metadata，并设计 chunk size 与 overlap。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>文档处理与 Chunking</h1>
+      <p>RAG 的上限很大程度取决于进入索引的数据质量。文档处理负责把原始资料变成干净、可追溯的文本；Chunking 负责把长文本切成适合检索和生成的小语义单元。</p>
+      <div class="article-meta"><span>Data Preparation</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <h2>文档解析的目标</h2>
+    <p>好的解析不是简单抽取纯文本，而是尽量保留文档结构，例如标题层级、段落、列表、表格、页码、图片 OCR、来源链接和权限信息。</p>
+
+    <h2>常见输入与处理重点</h2>
+    <ul>
+      <li><strong>PDF：</strong>处理分页、页眉页脚、表格、扫描件 OCR 和段落顺序。</li>
+      <li><strong>网页：</strong>去除导航、广告、脚本和重复区块，保留正文与来源 URL。</li>
+      <li><strong>表格：</strong>保留列名、行语义和单位，避免变成无上下文的碎片。</li>
+      <li><strong>图片：</strong>执行 OCR，并记录图片来源和识别置信度。</li>
+    </ul>
+
+    <h2>Metadata 为什么重要</h2>
+    <p>解析后应给文本片段标注来源、标题、页码、章节、更新时间、权限范围和业务标签。Metadata 决定了过滤、引用、权限控制和答案追溯能力。</p>
+
+    <h2>为什么需要 Chunk</h2>
+    <ul>
+      <li>文档太长，可能超过模型上下文窗口。</li>
+      <li>整篇文档 embedding 会稀释局部语义。</li>
+      <li>检索粒度太粗，容易召回无关内容。</li>
+      <li>小块文本更容易精准匹配用户问题。</li>
+      <li>可以减少最终 Prompt 中的 token 成本。</li>
+    </ul>
+
+    <h2>Chunk Size 和 Overlap</h2>
+    <p>常见起点是 chunk size 300 到 800 tokens，overlap 50 到 150 tokens。Chunk 太大会带来语义稀释和噪声，chunk 太小会导致上下文缺失和引用不完整。</p>
+
+    <h2>切分策略</h2>
+    <p>技术文档、论文和合同适合稍大的结构化 chunk；FAQ 和知识条目适合较小 chunk。RecursiveCharacterTextSplitter 通常比按固定字符硬切更适合自然语言文档，因为它会优先保留段落、换行和句子结构。</p>
+
+    <h2>常见问题</h2>
+    <ul>
+      <li>PDF 抽取顺序混乱，导致 chunk 内语义不连续。</li>
+      <li>表格被拉平成普通文本，丢失列名和单位。</li>
+      <li>网页噪声过多，导航和广告进入索引。</li>
+      <li>缺少来源信息，答案无法给出引用。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/rag/embedding-vector-database/")}>Embedding 与向量数据库 →</a>
+    </div>
+  </article>
+</NotesLayout>

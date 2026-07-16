@@ -1,0 +1,62 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Node 与 Edge | 技术笔记"
+  description="LangGraph 中 Node 和 Edge 的职责划分：节点做工作，边决定下一步。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LangGraph</p>
+      <h1>Node 与 Edge</h1>
+      <p>
+        LangGraph 的一个实用理解是：Node 做工作，Edge 决定下一步。
+        把两者分开，可以让 Agent 的执行逻辑、路由逻辑和状态更新更加清晰。
+      </p>
+      <div class="article-meta"><span>Graph API</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>Node：执行具体工作</h2>
+    <p>
+      Node 是普通函数。它接收当前 State，执行某个步骤，然后返回对 State 的更新。
+      一个节点可以是 LLM 分类、RAG 检索、工具调用、人工审核、格式校验或结果生成。
+    </p>
+
+    <h2>Edge：连接和路由</h2>
+    <p>
+      Edge 定义节点之间如何流转。固定 Edge 适合稳定顺序流程，例如 parse → retrieve → generate；
+      条件 Edge 适合根据 State 动态选择下一步，例如成功继续、失败重试、低置信度转人工。
+    </p>
+
+    <h2>节点颗粒度怎么选</h2>
+    <p>
+      官方文档强调，节点颗粒度会影响可恢复性和可观测性。节点越小，checkpoint 边界越细，
+      失败后需要重复的工作越少；但节点太碎也会让图结构更复杂。
+    </p>
+    <ul>
+      <li><strong>外部服务调用：</strong>建议单独成节点，便于设置 retry、timeout 和错误处理。</li>
+      <li><strong>关键决策：</strong>建议单独成节点，便于观察模型做了什么判断。</li>
+      <li><strong>可复用逻辑：</strong>适合拆成节点或子图，方便测试和复用。</li>
+      <li><strong>强耦合小逻辑：</strong>可以合并，避免图过度碎片化。</li>
+    </ul>
+
+    <h2>一个常见反模式</h2>
+    <p>
+      把读取输入、分类、检索、生成、错误处理都塞进一个大节点，短期写起来快，但后续很难定位问题。
+      更好的方式是让每个节点承担清晰职责，并把分支放到 Edge 中。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/graph-api">Graph API overview</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph">Thinking in LangGraph</a>
+    </div>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/langgraph/conditional-edge/")}>Conditional Edge →</a>
+    </div>
+  </article>
+</NotesLayout>

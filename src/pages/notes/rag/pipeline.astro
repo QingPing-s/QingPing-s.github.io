@@ -1,0 +1,55 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="RAG 核心流程 | 技术笔记" description="RAG 的离线建库、在线检索、Prompt 构造与生成流程。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>RAG 核心流程</h1>
+      <p>一个完整的 RAG 系统通常分为离线建库和在线问答两条链路。前者负责把资料变成可检索索引，后者负责把用户问题转成检索、上下文构造和生成流程。</p>
+      <div class="article-meta"><span>Pipeline</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>离线建库流程</h2>
+    <div class="pipeline article-pipeline">
+      <span>文档收集</span><i>→</i><span>文档解析</span><i>→</i><span>文本清洗</span><i>→</i><span>Chunk 切分</span><i>→</i><span>Embedding</span><i>→</i><span>文档入库</span>
+    </div>
+    <p>离线阶段的目标是把原始文档处理成稳定、可追溯、可检索的数据。解析时应尽量保留标题层级、段落、表格、页码、来源和权限信息。</p>
+
+    <h2>在线问答流程</h2>
+    <div class="pipeline article-pipeline">
+      <span>用户问题</span><i>→</i><span>问题改写</span><i>→</i><span>问题向量化</span><i>→</i><span>Top-K 召回</span><i>→</i><span>Rerank</span><i>→</i><span>Prompt 构造</span><i>→</i><span>LLM 生成</span>
+    </div>
+    <p>在线阶段的关键是控制检索质量和上下文质量。检索错了，后续生成很难正确；上下文噪声太多，模型也容易被无关内容干扰。</p>
+
+    <h2>Prompt 构造与生成</h2>
+    <p>检索到相关 chunk 后，系统需要把用户问题、上下文和回答规则组织成 Prompt，让 LLM 基于证据生成答案。</p>
+    <ul>
+      <li><strong>用户问题：</strong>可以是原始问题，也可以是改写后的检索问题。</li>
+      <li><strong>相关上下文：</strong>应包含检索和重排后的 chunk，最好带来源、编号和页码。</li>
+      <li><strong>回答规则：</strong>要求模型只基于上下文回答，不确定时说明缺少信息。</li>
+      <li><strong>输出格式：</strong>明确是否需要列表、表格、引用来源或步骤说明。</li>
+    </ul>
+
+    <h2>Stuff Chain</h2>
+    <p>Stuff Chain 是最直接的生成方式：把 retriever 返回的文档片段拼接进 Prompt，再交给 LLM 回答。它适合 top-k 较小、chunk 较短的场景；如果上下文过长或噪声过多，就需要压缩、重排或分步生成。</p>
+
+    <h2>降低幻觉的提示约束</h2>
+    <p>Prompt 中应明确要求模型基于给定资料回答，禁止编造来源。如果上下文不足，应让模型说明缺少哪些信息，而不是强行补全一个确定答案。</p>
+
+    <h2>工程关注点</h2>
+    <ul>
+      <li><strong>索引质量：</strong>文档解析、清洗、metadata 和 chunk 策略决定召回上限。</li>
+      <li><strong>检索质量：</strong>Embedding、Top-K、Hybrid Search 和 Rerank 决定进入 Prompt 的证据质量。</li>
+      <li><strong>生成质量：</strong>Prompt 模板、引用约束和答案格式决定最终输出是否可靠。</li>
+      <li><strong>可观测性：</strong>需要记录 query、retrieved chunks、rerank 分数、prompt 和最终答案。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/rag/document-processing/")}>文档处理与 Chunking →</a>
+    </div>
+  </article>
+</NotesLayout>

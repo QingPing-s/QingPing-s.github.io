@@ -48,6 +48,19 @@ import { sitePath } from "../../../lib/site.js";
       测试不仅覆盖成功路径，也验证条件分支、规则降级、checkpoint 参数和异常任务状态。浏览器 Smoke Test 则确认进度、推荐结果、差距分析、Trace 和报告能够完成真实交互闭环。
     </p>
 
+    <h2>7. 与 LangGraph 官方机制的对应</h2>
+    <p>
+      LangGraph 官方 fault tolerance 文档把节点失败后的响应拆成 retries、timeouts 和 error handling。
+      这些机制应按节点粒度配置：外部 API、数据库、LLM 调用和文件操作通常有不同失败模式，也需要不同 retry 策略。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/fault-tolerance">Fault tolerance</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/use-graph-api">Use the graph API</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/interrupts">Interrupts</a>
+    </div>
+
     <div class="article-next">
       <span>返回案例</span>
       <a href={sitePath("projects/jobpilot-agent/")}>查看 JobPilot 完整项目架构 →</a>

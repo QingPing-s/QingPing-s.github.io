@@ -33,12 +33,12 @@ export const noteSections = [
     id: "rag",
     title: "RAG",
     items: [
-      ["Embedding", "rag/embedding/"],
-      ["Vector Database", "rag/vector-database/"],
-      ["Hybrid Retrieval", "rag/hybrid-retrieval/"],
-      ["Weighted RRF", "rag/weighted-rrf/"],
-      ["LLM Rerank", "rag/llm-rerank/"],
-      ["RAG Evaluation", "rag/rag-evaluation/"],
+      ["RAG 是什么", "rag/what-is-rag/"],
+      ["RAG 核心流程", "rag/pipeline/"],
+      ["文档处理与 Chunking", "rag/document-processing/"],
+      ["Embedding 与向量数据库", "rag/embedding-vector-database/"],
+      ["检索与排序", "rag/retrieval-ranking/"],
+      ["RAG 评估与进阶", "rag/rag-evaluation-advanced/"],
     ],
   },
   {

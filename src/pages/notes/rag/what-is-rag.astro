@@ -1,0 +1,95 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="RAG 是什么 | 技术笔记"
+  description="从检索、增强和生成三个环节理解 RAG 的核心流程、关键组件、工程要点、优势局限和应用场景。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>RAG 是什么</h1>
+      <p>
+        RAG 全称是 Retrieval-Augmented Generation，检索增强生成。它的核心思想是：
+        大模型回答前，先从外部知识库检索相关资料，再把检索结果作为上下文交给模型生成答案。
+      </p>
+      <div class="article-meta"><span>RAG Overview</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/rag/rag-overview.png")} alt="RAG 知识梳理图" loading="lazy" />
+      <figcaption>RAG 的主线是检索、增强、生成，目标是让知识更可靠、降低幻觉。</figcaption>
+    </figure>
+
+    <h2>为什么需要 RAG</h2>
+    <p>
+      普通 LLM 只依赖参数记忆回答问题，会遇到知识过时、容易幻觉、无法访问企业私有数据、更新成本高等问题。
+      RAG 不把知识硬塞进模型参数，而是把知识放在外部知识库中，需要时动态检索。
+    </p>
+
+    <h2>完整 RAG Pipeline</h2>
+    <p>一个完整 RAG 系统通常分为离线建库和在线问答两部分。</p>
+    <ul>
+      <li><strong>离线建库：</strong>文档收集 → 文档解析 → 文本清洗 → Chunk 切分 → Embedding 向量化 → 文档入库。</li>
+      <li><strong>在线问答：</strong>用户问题 → Query Rewrite → 问题向量化 → Top-K 检索 → Rerank → 拼接 Prompt → LLM 生成答案。</li>
+    </ul>
+
+    <h2>关键组件</h2>
+    <ul>
+      <li><strong>知识库：</strong>企业内部文档、网页、表格、图片 OCR、制度、FAQ 等。</li>
+      <li><strong>Chunk：</strong>长文档切成小语义单元，便于向量化和检索。</li>
+      <li><strong>Embedding：</strong>把文本转为向量，语义相近的文本在向量空间距离更近。</li>
+      <li><strong>向量数据库：</strong>存储向量并支持相似度检索，例如 FAISS、Chroma、Milvus、OpenSearch。</li>
+      <li><strong>检索器：</strong>基于向量相似度、BM25 或 Hybrid Search 召回 Top-K 文本块。</li>
+      <li><strong>重排器：</strong>对召回结果进一步排序，把更相关的上下文放入 Prompt。</li>
+      <li><strong>生成器：</strong>LLM 基于问题、检索内容和指令生成最终答案。</li>
+    </ul>
+
+    <h2>工程要点</h2>
+    <ul>
+      <li><strong>Chunk 策略：</strong>按段落、标题或语义切分，常见 chunk size 为 300 到 800 tokens，overlap 为 50 到 150 tokens。</li>
+      <li><strong>Embedding 模型：</strong>决定语义检索质量。检索错了，后面的 LLM 再强也很难答对。</li>
+      <li><strong>Top-K 设置：</strong>K 太小容易漏证据，K 太大容易引入噪声并增加 Prompt 成本。</li>
+      <li><strong>Rerank 策略：</strong>先粗召回，再用 reranker 或规则重排提升最终上下文质量。</li>
+      <li><strong>Prompt 构造：</strong>明确回答格式、引用来源和“不知道就说不知道”的边界。</li>
+      <li><strong>评估指标：</strong>同时看召回率、命中率、答案准确率、忠实性、引用率、幻觉率和响应时间。</li>
+    </ul>
+
+    <h2>优势与局限</h2>
+    <div class="comparison-grid">
+      <div>
+        <h3>优势</h3>
+        <p>降低幻觉，支持私有和最新数据，答案可引用来源，知识库可以灵活更新。</p>
+      </div>
+      <div>
+        <h3>局限</h3>
+        <p>检索质量受限于索引质量，切分不当会影响效果，向量检索和重排会带来延迟，不能保证 100% 正确。</p>
+      </div>
+    </div>
+
+    <h2>RAG 和微调、Prompt Engineering 的区别</h2>
+    <p>
+      RAG 主要解决知识问题，微调主要解决行为模式问题，Prompt Engineering 主要解决指令组织问题。
+      三者并不互斥：一个生产系统中常常同时使用结构化 Prompt、RAG 检索和少量模型适配。
+    </p>
+
+    <h2>Agentic RAG</h2>
+    <p>
+      普通 RAG 是固定链路：用户问题 → 检索 → 生成。Agentic RAG 会让 Agent 判断是否需要检索、
+      选择检索工具、观察结果，并决定是否继续检索、改写关键词或调用其他工具。
+    </p>
+
+    <h2>一句话总结</h2>
+    <p>
+      RAG 的本质是把大模型从“闭卷考试”变成“开卷考试”：模型负责理解、推理和表达，
+      外部知识库负责提供可靠、可更新、可追溯的知识来源。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/rag/pipeline/")}>RAG Pipeline →</a>
+    </div>
+  </article>
+</NotesLayout>

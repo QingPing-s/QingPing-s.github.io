@@ -1,0 +1,59 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="RAG 评估与进阶 | 技术笔记" description="RAG 的检索评估、生成评估、Agentic RAG 和高级检索策略。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>RAG 评估与进阶</h1>
+      <p>评估 RAG 不能只看最终答案，还要拆开看检索质量、生成质量和端到端效果。在此基础上，再考虑 Agentic RAG 和高级检索策略。</p>
+      <div class="article-meta"><span>Evaluation / Advanced RAG</span><span>约 9 分钟阅读</span></div>
+    </header>
+
+    <h2>检索质量</h2>
+    <p>检索层关注相关 chunk 是否被检索出来，Top-K 里有没有正确证据。</p>
+    <ul>
+      <li><strong>Recall@K：</strong>正确证据是否出现在前 K 个结果中。</li>
+      <li><strong>Precision@K：</strong>前 K 个结果中有多少是相关内容。</li>
+      <li><strong>MRR：</strong>第一个正确结果出现得越靠前越好。</li>
+      <li><strong>NDCG：</strong>考虑排序位置和相关性等级。</li>
+    </ul>
+
+    <h2>生成质量</h2>
+    <p>生成层关注答案是否正确、完整、忠实于上下文，是否出现幻觉。</p>
+    <ul>
+      <li><strong>Answer Correctness：</strong>答案是否解决用户问题。</li>
+      <li><strong>Faithfulness：</strong>答案是否忠实于检索上下文。</li>
+      <li><strong>Context Relevance：</strong>进入 Prompt 的上下文是否相关。</li>
+      <li><strong>Groundedness：</strong>答案是否能被引用来源支撑。</li>
+    </ul>
+
+    <h2>端到端评估</h2>
+    <p>最终要看用户问题经过检索和生成后是否成功解决。端到端评估应同时记录延迟、成本、引用率、失败原因和 bad case。</p>
+
+    <h2>Agentic RAG</h2>
+    <p>普通 RAG 是固定链路：用户问题 → 检索 → 生成。Agentic RAG 则让 Agent 根据任务状态动态决定是否检索、选择什么检索工具，以及是否继续检索。</p>
+    <div class="pipeline article-pipeline">
+      <span>用户问题</span><i>→</i><span>判断是否检索</span><i>→</i><span>选择检索工具</span><i>→</i><span>观察结果</span><i>→</i><span>继续检索 / 生成答案</span>
+    </div>
+    <p>它适合复杂问题、多知识源、多轮检索和工具组合场景，但会增加调用次数、延迟、成本和评估难度。</p>
+
+    <h2>高级检索策略</h2>
+    <ul>
+      <li><strong>Query Rewrite：</strong>把短问题、口语化问题改写得更适合检索。</li>
+      <li><strong>Multi-Query Retrieval：</strong>从多个角度改写问题并分别检索，再合并结果。</li>
+      <li><strong>Sentence-Window Retrieval：</strong>用小粒度句子检索，返回命中句子周围的上下文窗口。</li>
+      <li><strong>Auto-Merging Retrieval：</strong>构建父子层级 chunk，命中多个子节点时合并为更大的父节点返回。</li>
+    </ul>
+
+    <h2>评估建议</h2>
+    <p>建立固定评测集，保存 query、标准证据、标准答案和可接受答案范围。每次调整 chunk、embedding、top-k、rerank 或 Agent 检索策略后重新跑评测，避免凭感觉调参。</p>
+
+    <div class="article-next">
+      <span>回到总览</span>
+      <a href={sitePath("notes/rag/what-is-rag/")}>RAG 是什么 →</a>
+    </div>
+  </article>
+</NotesLayout>

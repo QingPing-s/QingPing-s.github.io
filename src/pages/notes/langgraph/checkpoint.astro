@@ -1,0 +1,65 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Checkpoint | 技术笔记"
+  description="LangGraph Checkpoint 如何支持短期记忆、失败恢复、人类介入和 time travel。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">LangGraph</p>
+      <h1>Checkpoint</h1>
+      <p>
+        Checkpoint 是 LangGraph 持久化能力的核心。它会保存图状态快照，让 Agent 可以继续对话、
+        从失败处恢复、等待人工审批，或者回放和分叉历史执行。
+      </p>
+      <div class="article-meta"><span>Persistence</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>Checkpoint 保存什么</h2>
+    <p>
+      Checkpointer 会按 thread 保存 graph state 的快照。对 Agent 来说，这就是短期、线程级记忆：
+      当前消息、工具结果、节点进度、人工审核状态和后续要执行的节点都可以随线程恢复。
+    </p>
+
+    <h2>它解决哪些问题</h2>
+    <ul>
+      <li><strong>多轮对话：</strong>同一个 thread 可以持续保留上下文。</li>
+      <li><strong>失败恢复：</strong>外部服务失败或进程重启后，可以从 checkpoint 继续。</li>
+      <li><strong>Human-in-the-loop：</strong>图可以暂停，等待人类查看、修改或批准状态后恢复。</li>
+      <li><strong>Time travel：</strong>可以从过去 checkpoint replay，或 fork 出替代执行路径。</li>
+    </ul>
+
+    <h2>Checkpoint 与 Store 的区别</h2>
+    <p>
+      官方文档把 persistence 分为 checkpointers 和 stores。Checkpointer 保存 thread 的图状态，
+      更适合短期记忆、恢复和人工介入；Store 保存应用定义的数据，适合跨线程的长期记忆，例如用户偏好和事实。
+    </p>
+
+    <h2>生产环境建议</h2>
+    <p>
+      本地 demo 可以使用内存 checkpointer；生产环境应使用数据库后端，例如 Postgres。
+      关键节点拆得越清晰，checkpoint 边界越有价值，失败后需要重复的工作也越少。
+    </p>
+
+    <h2>和节点设计的关系</h2>
+    <p>
+      LangGraph 的 checkpoint 通常在节点边界发挥作用。把外部 API、LLM 调用和人工审核拆成独立节点，
+      可以更精确地恢复和观察工作流。
+    </p>
+
+    <div class="source-links">
+      <strong>官方参考</strong>
+      <a href="https://docs.langchain.com/oss/python/langgraph/persistence">Persistence</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/checkpointers">Checkpointers</a>
+      <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">Use time-travel</a>
+    </div>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/langgraph/multi-agent/")}>Multi-Agent →</a>
+    </div>
+  </article>
+</NotesLayout>

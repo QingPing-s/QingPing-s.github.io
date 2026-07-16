@@ -1,0 +1,58 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="检索与排序 | 技术笔记" description="RAG 中 Top-K、Hybrid Retrieval、Weighted RRF 和 Rerank 的作用与取舍。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">RAG</p>
+      <h1>检索与排序</h1>
+      <p>检索层决定哪些证据有机会进入 Prompt。实际系统通常不会只依赖一种检索方式，而是组合 Top-K、关键词检索、Hybrid Retrieval、RRF 和 Rerank。</p>
+      <div class="article-meta"><span>Retrieval</span><span>约 9 分钟阅读</span></div>
+    </header>
+
+    <h2>Top-K 检索</h2>
+    <p>Top-K 是从知识库中取回与用户问题最相关的 K 个 chunk。K 太小可能漏掉关键证据；K 太大会引入噪声、拉长 Prompt、增加成本。</p>
+    <ul>
+      <li><strong>事实问答：</strong>通常需要较小 K，保证证据精准。</li>
+      <li><strong>总结分析：</strong>可能需要更大 K，以覆盖多个信息来源。</li>
+      <li><strong>Rerank 场景：</strong>可以先粗召回 top-20，再重排取 top-5 进入 Prompt。</li>
+    </ul>
+
+    <h2>Hybrid Retrieval</h2>
+    <p>Hybrid Retrieval 通常结合向量检索和关键词检索。向量检索擅长语义相似，关键词检索擅长精确词、编号、术语和实体匹配。</p>
+    <ul>
+      <li><strong>Vector Search：</strong>召回语义相似的 chunk。</li>
+      <li><strong>BM25 / Keyword Search：</strong>召回精确词命中的 chunk。</li>
+      <li><strong>Union：</strong>合并两路候选集，去重后进入排序。</li>
+      <li><strong>RRF：</strong>用排名融合不同检索器结果，避免分数尺度不一致。</li>
+    </ul>
+
+    <h2>Weighted RRF</h2>
+    <p>Vector 相似度与关键词分数不在同一尺度，直接相加需要额外校准。Reciprocal Rank Fusion 只使用排名，因此可以稳定融合不同检索器。</p>
+    <pre class="flow-code"><code>score(d) =
+  vector_weight  / (k + vector_rank(d))
++ keyword_weight / (k + keyword_rank(d))</code></pre>
+    <p>如果一个 chunk 同时出现在向量和关键词结果中，它会获得更稳定的优先级。权重可以根据业务评测调整，而不是固定相信某一路检索。</p>
+
+    <h2>Rerank</h2>
+    <p>Rerank 是先用 retriever 粗召回一批候选，再用更强的模型或规则重新排序，选择最相关内容进入 Prompt。</p>
+    <ul>
+      <li><strong>Cross-Encoder：</strong>直接判断 query 与 chunk 的相关性，质量通常较高但成本更高。</li>
+      <li><strong>LLM Rerank：</strong>让 LLM 根据问题和候选内容排序，灵活但延迟和成本更高。</li>
+      <li><strong>规则重排：</strong>根据 metadata、来源权重、时间、权限或业务规则调整排序。</li>
+    </ul>
+
+    <h2>评估方式</h2>
+    <p>检索参数不能只凭感觉设置，应通过 Recall@K、Hit Rate、MRR、NDCG 和答案准确率评估。最终关注的是正确证据是否被召回，以及进入 Prompt 的上下文是否足够干净。</p>
+
+    <h2>工程取舍</h2>
+    <p>混合检索不是天然优于单路检索。对于技术文档、代码问答、岗位匹配、政策检索等任务，Hybrid Retrieval 常常有价值；但权重、Top-K 和 rerank 是否有效，仍然需要离线评测和 bad case 分析验证。</p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/rag/rag-evaluation-advanced/")}>RAG 评估与进阶 →</a>
+    </div>
+  </article>
+</NotesLayout>
