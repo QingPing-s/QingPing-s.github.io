@@ -1,0 +1,82 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Context Engineering | 技术笔记" description="上下文工程如何组织、筛选、压缩、注入和管理模型可见信息。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>Context Engineering</h1>
+      <p>
+        上下文工程是在调用大模型前，系统性地组织、筛选、压缩、注入和管理上下文信息，
+        让模型在有限上下文窗口内看到最有用的信息，从而更稳定地完成任务。
+      </p>
+      <div class="article-meta"><span>Context</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>它解决什么问题</h2>
+    <ul>
+      <li>上下文窗口有限，不能把所有历史消息和工具结果都塞进去。</li>
+      <li>长对话中关键信息容易丢失，需要摘要、记忆和状态管理。</li>
+      <li>工具调用和 RAG 检索结果可能很长、很乱，需要清洗、排序、压缩和结构化。</li>
+      <li>Agent 是多步骤任务，需要在上下文中维护当前任务状态和执行轨迹。</li>
+    </ul>
+
+    <h2>上下文窗口里通常包含什么</h2>
+    <ul>
+      <li><strong>System Prompt：</strong>角色、行为准则、输出格式和硬性约束。</li>
+      <li><strong>用户当前输入与必要历史：</strong>当前任务的原始依据。</li>
+      <li><strong>外部检索数据：</strong>RAG 从文档、知识库或网页中检索出的相关片段。</li>
+      <li><strong>工具与技能：</strong>工具描述、JSON Schema、MCP 工具说明和可复用 Skill。</li>
+      <li><strong>记忆：</strong>按需注入用户偏好、项目背景和长期事实。</li>
+      <li><strong>状态与轨迹：</strong>当前目标、已完成步骤、工具结果和错误信息。</li>
+    </ul>
+
+    <h2>上下文策略什么时候触发</h2>
+    <ol>
+      <li>会话开始时加载长期偏好和最近摘要。</li>
+      <li>用户提到“上次、继续、根据文档”等意图时触发记忆检索或 RAG。</li>
+      <li>上下文接近上限时触发摘要压缩。</li>
+      <li>工具调用后触发结果清洗和结构化。</li>
+      <li>任务结束时触发记忆写入。</li>
+      <li>涉及发邮件、删文件、执行命令等高风险动作时触发权限确认和日志记录。</li>
+    </ol>
+
+    <h2>Token 预算怎么设计</h2>
+    <p>
+      Token 数一般要用目标模型对应 tokenizer 来算，而不是按字符数估算。工程里可以在每条 message 写入时，
+      对 content、role、tool call、tool result 等序列化后的内容做 token 统计，并记录到 <code>token_count</code> 字段。
+    </p>
+    <p>
+      阈值不能写死。实际可用输入 token 要扣掉 system prompt、工具 schema、预期输出 token 和安全边界。
+      如果模型已知，就从配置表读取；如果用户自定义模型，就让用户配置上下文窗口；如果未知，就使用保守默认值。
+    </p>
+
+    <h2>软限制、硬限制和裁剪阈值</h2>
+    <ul>
+      <li><strong>70%：</strong>开始压缩或摘要。</li>
+      <li><strong>85%：</strong>强制压缩高 token 内容。</li>
+      <li><strong>95%：</strong>必须裁剪，避免上下文溢出。</li>
+    </ul>
+
+    <h2>优先压缩什么</h2>
+    <p>
+      优先压缩冗余、低价值、高 token 的内容；保留用户原始意图、关键约束和任务状态。
+      通常先压缩 assistant 的长输出，再压缩工具结果和 RAG 片段，最后压缩较早的闲聊和重复内容。
+      用户明确需求、约束、纠正、代码片段和错误日志一般不优先压缩。
+    </p>
+
+    <h2>原文和摘要混合</h2>
+    <p>
+      拼接上下文时可以混合使用原文和摘要。例如五轮对话里只压缩第一轮 assistant，
+      传给模型的是第一轮 user 原文、第一轮 assistant 摘要、后续几轮原文和当前用户问题。
+      这样既控制 token，又尽量保留用户原始意图和最近上下文。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/tool-use/")}>Tool Use →</a>
+    </div>
+  </article>
+</NotesLayout>

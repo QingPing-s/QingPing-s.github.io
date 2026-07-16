@@ -1,0 +1,84 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="MCP | 技术笔记" description="Model Context Protocol 如何标准化 AI 应用与外部工具、资源和 Prompt 的连接方式。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>MCP：Model Context Protocol</h1>
+      <p>
+        MCP 是 Model Context Protocol，模型上下文协议。它不是模型本身，而是一套开放协议，
+        用来标准化 AI 应用和外部工具、数据、工作流之间的连接方式。
+      </p>
+      <div class="article-meta"><span>Protocol</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>MCP 解决什么问题</h2>
+    <p>
+      MCP 解决的是工具接入碎片化问题，而不是直接提升模型推理能力。
+      它把外部能力标准化暴露给 AI 应用，让工具、资源和 prompt 可以被统一发现和调用。
+    </p>
+
+    <h2>核心架构</h2>
+    <h3>MCP Host</h3>
+    <p>Host 是用户真正交互的 AI 应用，比如 Claude Desktop、Cursor、Agent 平台或聊天应用。它负责承载模型、对话界面、用户请求和整体 Agent 流程。</p>
+
+    <h3>MCP Client</h3>
+    <p>Client 通常运行在 Host 里面，负责和 MCP Server 建立连接。一个 Host 可以连接多个 MCP Server，每个 Client 通常和一个 Server 保持连接。</p>
+
+    <h3>MCP Server</h3>
+    <p>MCP Server 是暴露工具和数据的一端，可以提供三类核心能力：Tools、Resources、Prompts。</p>
+    <ul>
+      <li><strong>Tools：</strong>可执行能力，例如数据库查询、文件操作、搜索或业务 API。</li>
+      <li><strong>Resources：</strong>给模型或用户读取的上下文数据。</li>
+      <li><strong>Prompts：</strong>可复用工作流或提示词模板。</li>
+    </ul>
+
+    <h2>典型运行流程</h2>
+    <ol>
+      <li>Host 启动。</li>
+      <li>Host 创建 MCP Client。</li>
+      <li>MCP Client 连接 MCP Server。</li>
+      <li>双方初始化并进行能力协商。</li>
+      <li>Client 发现 Server 提供的 Tools / Resources / Prompts。</li>
+      <li>用户提出任务。</li>
+      <li>模型判断是否需要外部能力。</li>
+      <li>Client 调用对应 MCP Server。</li>
+      <li>Server 执行工具或返回资源。</li>
+      <li>模型基于结果继续推理或生成最终答案。</li>
+    </ol>
+
+    <h2>工程价值</h2>
+    <ul>
+      <li>降低工具接入成本。</li>
+      <li>工具可以被动态发现。</li>
+      <li>更适合企业内部系统集成。</li>
+      <li>更适合 AI IDE 和编程 Agent。</li>
+    </ul>
+
+    <h2>安全问题</h2>
+    <p>MCP 引入外部工具后，也会带来新的安全风险。</p>
+    <ul>
+      <li>工具权限过大。</li>
+      <li>Prompt Injection 诱导模型调用危险工具。</li>
+      <li>恶意 MCP Server 伪装成正常工具。</li>
+      <li>工具描述被污染。</li>
+      <li>本地文件或密钥泄露。</li>
+      <li>执行命令类工具导致远程代码执行风险。</li>
+      <li>Supply Chain 攻击。</li>
+    </ul>
+
+    <h2>MCP 与 Function Calling 的区别</h2>
+    <p>
+      Function Calling 是模型侧能力，重点是模型根据上下文输出函数名和 JSON 参数。
+      MCP 是工程协议，重点是工具、资源和 prompt 如何被外部服务标准化暴露给 AI 应用。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/agent-harness/")}>Harness Engineering →</a>
+    </div>
+  </article>
+</NotesLayout>

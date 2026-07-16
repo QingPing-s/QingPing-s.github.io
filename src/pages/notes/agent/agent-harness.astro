@@ -4,32 +4,69 @@ import { sitePath } from "../../../lib/site.js";
 ---
 
 <NotesLayout
-  title="如何把 LLM Demo 做成可写进简历的 Agent 项目 | AI Agent 工程博客"
-  description="从输入契约、工作流、检索、评测和部署角度拆解 JobPilot-Agent 的工程化过程。"
+  title="Harness Engineering | 技术笔记"
+  description="Harness Engineering 如何把模型、工具、状态、权限、日志、评测和交付流程组织成可运行的 Agent 工程系统。"
 >
   <article class="article-page prose">
     <header class="article-header">
-      <p class="eyebrow">AI Agent Engineering</p>
-      <h1>如何把 LLM Demo 做成可写进简历的 Agent 项目</h1>
+      <p class="eyebrow">Agent 工程</p>
+      <h1>Harness Engineering</h1>
       <p>
-        关键不是增加模型调用次数，而是让输入、状态、检索、输出、错误处理和评测形成可验证闭环。
+        Harness Engineering 指的是围绕 LLM 和 Agent 构建一层可控运行外壳，
+        用工程代码驾驭模型的不确定性，让模型调用、工具执行、状态管理、权限控制、日志追踪和评测闭环可以稳定运行。
       </p>
-      <div class="article-meta"><span>工程方法</span><span>约 8 分钟阅读</span></div>
+      <div class="article-meta"><span>Harness Engineering</span><span>约 9 分钟阅读</span></div>
     </header>
 
-    <h2>1. 先定义系统问题，而不是先选框架</h2>
+    <h2>为什么需要 Harness</h2>
     <p>
-      JobPilot 要解决的不是“让 LLM 判断岗位是否合适”这样一个模糊问题，而是把候选人信息和大量 JD 转换为可排序、可解释、可继续优化的结果。因此系统需要岗位持久化、召回、重排、评分、差距分析和报告输出。
+      一个 LLM demo 往往只是 prompt 加一次模型调用；一个可交付的 Agent 项目则需要处理输入契约、任务状态、
+      工具调用、异常恢复、成本控制、用户确认、日志追踪和质量评估。Harness 的价值就是把这些工程边界组织起来。
     </p>
 
-    <h2>2. 用数据契约约束节点边界</h2>
+    <h2>Harness 负责什么</h2>
+    <ul>
+      <li><strong>输入契约：</strong>用 schema 明确用户输入、文件、配置和运行参数。</li>
+      <li><strong>模型调用：</strong>封装模型选择、重试、超时、温度、输出格式和 token 预算。</li>
+      <li><strong>工具注册：</strong>统一管理工具名称、描述、参数 schema、返回格式和错误格式。</li>
+      <li><strong>状态管理：</strong>保存当前目标、执行步骤、工具结果、错误信息和用户审批状态。</li>
+      <li><strong>权限边界：</strong>对文件写入、命令执行、发邮件、删数据等高风险操作设置确认机制。</li>
+      <li><strong>可观测性：</strong>记录 run_id、step、输入输出、耗时、异常、重试和最终结果。</li>
+      <li><strong>评测闭环：</strong>把工具选择、参数正确性、任务成功率、成本和延迟纳入评估。</li>
+    </ul>
+
+    <h2>最小 Harness 结构</h2>
+    <pre class="flow-code"><code>User Request
+  ↓
+Input Parser / Contract
+  ↓
+Planner or Router
+  ↓
+Tool Executor / Model Caller
+  ↓
+State Update / Checkpoint
+  ↓
+Validator / Human Review
+  ↓
+Final Answer + Trace</code></pre>
+
+    <h2>从 Demo 到项目的关键升级</h2>
     <p>
-      CandidateProfile、JobPosting、MatchResult、GapItem 和 ResumeSuggestion 都由 Pydantic 定义。每个节点接收和返回明确字段，模型 JSON 必须通过校验，前端不需要猜测模型输出格式。
+      JobPilot 这类项目要解决的不是“让 LLM 判断岗位是否合适”这样一个模糊问题，
+      而是把候选人信息和大量 JD 转换为可排序、可解释、可继续优化的结果。
+      因此系统需要岗位持久化、召回、重排、评分、差距分析和报告输出。
     </p>
 
-    <h2>3. 将 LLM 放在适合它的位置</h2>
+    <h2>用数据契约约束节点边界</h2>
     <p>
-      LLM 适合从非结构化文本抽取信息、解释匹配原因和生成建议，但不适合承担全部检索和排序。JobPilot 使用规则完成基础解析、重排和评分，仅让 DeepSeek 处理需要语义生成的部分。
+      CandidateProfile、JobPosting、MatchResult、GapItem 和 ResumeSuggestion 这类对象应由 Pydantic
+      或类似 schema 定义。每个节点接收和返回明确字段，模型 JSON 必须通过校验，前端不需要猜测模型输出格式。
+    </p>
+
+    <h2>把 LLM 放在适合它的位置</h2>
+    <p>
+      LLM 适合从非结构化文本抽取信息、解释匹配原因和生成建议，但不适合承担全部检索和排序。
+      稳定系统通常让规则、检索器、数据库和测试承担确定性部分，让模型处理语义判断和自然语言生成。
     </p>
 
     <aside class="callout">
@@ -37,29 +74,34 @@ import { sitePath } from "../../../lib/site.js";
       <p>LLM 是可替换的增强组件，而不是系统唯一能够运行的前提。</p>
     </aside>
 
-    <h2>4. 从线性脚本升级为状态工作流</h2>
+    <h2>从线性脚本升级为状态工作流</h2>
     <p>
-      LangGraph 管理节点状态和条件边：画像失败直接终止，JD 解析失败率过高进入人工审核，低匹配结果跳过昂贵的深度分析，成功路径最终统一生成报告。SQLite checkpoint 让人工审核后可以继续原任务。
+      Harness 通常会把任务拆成节点：解析、检索、工具调用、验证、人工确认和报告生成。
+      LangGraph 这类图框架可以管理节点状态和条件边：失败直接终止，低价值路径跳过昂贵模型调用，
+      高风险路径进入人工审核，成功路径统一输出结果。
     </p>
 
-    <h2>5. 用检索漏斗控制成本</h2>
+    <h2>用检索漏斗控制成本</h2>
     <p>
-      岗位库先进行 Hybrid Retrieval Top-20，再经过规则重排 Top-10；只有开启 LLM 重排时才发送 Top-5，深度解释进一步限制在最相关岗位。这样避免对 100 条岗位逐条调用模型。
+      不应对所有候选项逐条调用模型。更稳妥的方式是先用关键词或向量召回 Top-K，再做规则重排，
+      最后只把少量高价值候选交给 LLM 做深度解释或生成。
     </p>
 
-    <h2>6. 让结果可以被评测</h2>
+    <h2>让结果可以被评测</h2>
     <p>
-      离线评测对比五种检索与融合基线，不只统计 Recall@K 和 Hit@K，还包含 MRR、NDCG、Top-1 和 P95 延迟。Trace 则记录每个在线节点的输入输出数量、耗时、异常和降级情况。
+      Harness 需要记录每次运行的完整 trace：输入、节点、工具、参数、返回摘要、耗时、状态、错误和最终输出。
+      评测不只看最终答案，还要看工具选择是否正确、参数是否正确、是否有无效调用、是否能从错误中恢复。
     </p>
 
-    <h2>7. 最后补齐真实交付链路</h2>
+    <h2>最后补齐真实交付链路</h2>
     <p>
-      React 工作台、FastAPI 异步任务、SSE、pytest、Playwright、GitHub Actions、Docker 和 Azure 部署共同证明系统不是只在开发者机器上运行的一次性脚本。
+      一个 Agent 项目要能被信任，不能只在开发者电脑上跑通一次。接口、前端工作台、异步任务、SSE、
+      单元测试、浏览器测试、CI、Docker 和部署流程，都是 Harness Engineering 的一部分。
     </p>
 
     <div class="article-next">
       <span>继续阅读</span>
-      <a href={sitePath("notes/rag/retrieval-ranking/")}>Vector、Keyword 与 Weighted RRF 如何协作 →</a>
+      <a href={sitePath("notes/rag/retrieval-ranking/")}>检索与排序 →</a>
     </div>
   </article>
 </NotesLayout>

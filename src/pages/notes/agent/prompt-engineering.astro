@@ -1,0 +1,67 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Prompt Engineering | 技术笔记" description="Prompt Engineering 如何通过结构化输入控制大模型行为、边界和输出格式。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>Prompt Engineering</h1>
+      <p>
+        Prompt 可以理解成给大模型的一份任务说明书。Prompt Engineering 不是简单写提示词，
+        而是通过结构化输入控制大模型行为，使输出更稳定、更可评估、更容易接入工程系统。
+      </p>
+      <div class="article-meta"><span>Prompt</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>Prompt 要说明什么</h2>
+    <p>一个好的 Prompt 不只是问一句话，而是要让模型清楚任务边界。</p>
+    <ol>
+      <li>要做什么任务。</li>
+      <li>输入材料是什么。</li>
+      <li>输出格式是什么。</li>
+      <li>有哪些约束。</li>
+      <li>面向谁使用。</li>
+      <li>如何判断结果好坏。</li>
+    </ol>
+
+    <h2>核心原则</h2>
+    <ul>
+      <li><strong>写清楚指令：</strong>信息充分、边界明确、格式清楚。</li>
+      <li><strong>隔离输入材料：</strong>使用分隔符区分任务说明和原始内容。</li>
+      <li><strong>要求结构化输出：</strong>明确 JSON、表格、列表或段落格式。</li>
+      <li><strong>给模型处理步骤：</strong>复杂任务先分析，再输出结论。</li>
+      <li><strong>拆解复杂任务：</strong>不要一次把多个目标混在一起。</li>
+    </ul>
+
+    <h2>一个实用模板</h2>
+    <pre class="flow-code"><code>角色：你是谁
+任务：你要完成什么
+背景：输入材料和业务场景
+约束：不能做什么，必须遵守什么
+输出格式：按什么结构输出
+评价标准：什么样的结果算好
+示例：可选 few-shot 示例</code></pre>
+
+    <h2>常见错误</h2>
+    <ul>
+      <li>指令太泛，导致模型自由发挥。</li>
+      <li>没有输出格式，导致结果难以被程序消费。</li>
+      <li>一次要求太多，模型难以稳定完成。</li>
+      <li>没有说明背景，模型只能猜上下文。</li>
+      <li>不给模型处理步骤，复杂任务容易直接跳到错误答案。</li>
+    </ul>
+
+    <h2>工程中的迭代方式</h2>
+    <p>
+      Prompt Engineering 的真实工作方式通常是：写 Prompt、看结果、找问题、加约束、再测试。
+      Prompt 本质上是控制 LLM 行为的接口，因此它也需要像代码一样被版本管理、评测和回归测试。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/context-engineering/")}>Context Engineering →</a>
+    </div>
+  </article>
+</NotesLayout>

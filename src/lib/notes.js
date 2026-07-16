@@ -21,8 +21,12 @@ export const noteSections = [
     id: "agent-engineering",
     title: "Agent 工程",
     items: [
+      ["Prompt Engineering", "agent/prompt-engineering/"],
+      ["Context Engineering", "agent/context-engineering/"],
       ["Tool Use", "agent/tool-use/"],
-      ["Agent Harness", "agent/agent-harness/"],
+      ["Function Calling", "agent/function-calling/"],
+      ["MCP", "agent/mcp/"],
+      ["Harness Engineering", "agent/agent-harness/"],
     ],
   },
   {

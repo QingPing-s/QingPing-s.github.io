@@ -1,0 +1,116 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Tool Use | 技术笔记" description="Tool Use 如何让 LLM 从只会生成文本变成能够调用外部工具完成任务。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>Tool Use</h1>
+      <p>
+        Tool Use 是让 LLM 从“只会说”变成“能做事”的关键机制。
+        它让大模型在生成答案之外，主动调用外部工具完成任务。
+      </p>
+      <div class="article-meta"><span>Tools</span><span>约 9 分钟阅读</span></div>
+    </header>
+
+    <h2>Tool Use 与 Function Calling</h2>
+    <p>
+      Function Calling 是实现 Tool Use 的一种方式，它让模型生成结构化函数调用请求。
+      Tool Use 是更大的概念，还包括什么时候用工具、选哪个工具、参数怎么填、结果怎么读、
+      是否继续调用下一个工具，以及最终如何整合答案。
+    </p>
+
+    <h2>基本工作流</h2>
+    <ol>
+      <li>用户提出问题。</li>
+      <li>LLM 判断是否需要工具。</li>
+      <li>LLM 选择工具。</li>
+      <li>LLM 生成工具参数。</li>
+      <li>程序执行真实工具。</li>
+      <li>工具返回 Observation。</li>
+      <li>LLM 读取结果。</li>
+      <li>生成最终答案，或继续调用工具。</li>
+    </ol>
+
+    <h2>Tool Schema 怎么设计</h2>
+    <ul>
+      <li><strong>name：</strong>工具名称要清晰，避免模糊。</li>
+      <li><strong>description：</strong>模型判断该不该调用工具的重要依据。</li>
+      <li><strong>parameters：</strong>参数结构，一般用 JSON Schema 或类似结构定义。</li>
+      <li><strong>required：</strong>必填字段要明确。</li>
+      <li><strong>constraints：</strong>用类型、枚举、范围限制参数。</li>
+      <li><strong>response schema：</strong>返回结果格式要稳定。</li>
+      <li><strong>error schema：</strong>错误信息也要结构化。</li>
+    </ul>
+
+    <h2>Agent 如何判断什么时候调用工具</h2>
+    <ul>
+      <li><strong>模型自主判断：</strong>给模型工具列表，让模型根据用户问题决定是否调用。</li>
+      <li><strong>规则路由：</strong>先用规则判断任务类型，简单稳定。</li>
+      <li><strong>Router Agent：</strong>专门设计一个 Router 节点判断下一步走向。</li>
+    </ul>
+    <p>工程上常用混合方式：简单场景用规则保证稳定，复杂任务交给 Router Agent，同时设置置信度阈值和工具调用条件。</p>
+
+    <h2>工具调用失败怎么处理</h2>
+    <ul>
+      <li>参数错误：根据 schema 重新生成参数。</li>
+      <li>超时或限流：指数退避重试。</li>
+      <li>外部服务不可用：走 fallback 工具或降级路径。</li>
+      <li>高风险失败：停止执行并请求人工确认。</li>
+    </ul>
+    <p>所有失败都应该进入日志和 trace，方便后续排查。</p>
+
+    <h2>如何避免乱调用工具</h2>
+    <ul>
+      <li>工具描述要写清楚何时能用、何时不能用。</li>
+      <li>参数 schema 要强约束。</li>
+      <li>通过 Router 限制当前任务可用工具集合。</li>
+      <li>敏感工具需要权限确认。</li>
+      <li>设置最大调用次数、最大重试次数、超时和 token 预算。</li>
+    </ul>
+
+    <h2>如何记录工具调用过程</h2>
+    <p>一条完整 Agent Trace 通常包括：</p>
+    <ol>
+      <li>用户输入。</li>
+      <li>当前 Agent 状态。</li>
+      <li>模型决策后的 action。</li>
+      <li>调用的工具名称。</li>
+      <li>工具参数。</li>
+      <li>工具返回结果。</li>
+      <li>调用耗时。</li>
+      <li>是否成功。</li>
+      <li>错误信息。</li>
+      <li>下一步决策。</li>
+      <li>最终输出。</li>
+    </ol>
+
+    <h2>Tool Use 和 ReAct 的关系</h2>
+    <p>
+      在 ReAct 框架里，Tool Use 对应 Action。ReAct 的思想是推理和行动交替，
+      但工程实现时不一定暴露完整思维链。通常会记录 tool call trace、observation 和 final answer，
+      用于调试和评测。
+    </p>
+
+    <h2>评测 Tool Use</h2>
+    <ul>
+      <li>是否应该调用工具：tool-use decision accuracy。</li>
+      <li>是否选对工具：tool selection accuracy。</li>
+      <li>参数是否正确：argument accuracy。</li>
+      <li>最终答案是否正确：task success rate。</li>
+      <li>多步 Agent 还要看工具轨迹是否合理、是否有无效调用、是否能从错误中恢复、成本和延迟是否可接受。</li>
+    </ul>
+
+    <aside class="callout">
+      <strong>最终总结</strong>
+      <p>Tool Use 的本质不是让模型执行函数，而是让模型在合适的时候，把任务交给外部系统完成，再基于外部结果继续推理。</p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/function-calling/")}>Function Calling →</a>
+    </div>
+  </article>
+</NotesLayout>

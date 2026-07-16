@@ -1,0 +1,86 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Function Calling | 技术笔记" description="Function Calling 如何把自然语言请求转换成结构化函数调用，再由工程代码执行真实操作。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>Function Calling</h1>
+      <p>
+        Function Calling 不是让大模型直接执行函数，而是让模型根据用户问题生成结构化函数调用请求，
+        通常是 JSON 格式，然后由应用程序真正执行函数或 API。
+      </p>
+      <div class="article-meta"><span>Tool Interface</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>LLM 和工程代码分别负责什么</h2>
+    <div class="comparison-grid">
+      <div>
+        <h3>LLM 负责</h3>
+        <p>理解用户意图，判断是否需要工具，选择工具，并生成函数名和参数。</p>
+      </div>
+      <div>
+        <h3>工程代码负责</h3>
+        <p>接收工具调用请求，校验参数，执行真实函数或 API，再把结果返回给模型。</p>
+      </div>
+    </div>
+
+    <h2>为什么需要 Function Calling</h2>
+    <ul>
+      <li><strong>访问外部系统：</strong>天气、数据库、订单、日程、库存等。</li>
+      <li><strong>降低幻觉：</strong>让模型基于外部返回结果回答。</li>
+      <li><strong>稳定输出格式：</strong>把自然语言请求转换成结构化 API 调用。</li>
+      <li><strong>执行真实动作：</strong>发邮件、查库存、下订单等操作必须由程序执行。</li>
+    </ul>
+
+    <h2>核心流程</h2>
+    <pre class="flow-code"><code>User Query
+  ↓
+LLM + Tool Schema
+  ↓
+Tool Call: function_name + arguments
+  ↓
+Backend 执行真实函数/API
+  ↓
+Tool Result / Observation
+  ↓
+LLM 生成 Final Answer</code></pre>
+
+    <h2>三个关键对象</h2>
+    <ul>
+      <li><strong>Function Name：</strong>函数名要简洁、明确。</li>
+      <li><strong>Function Description：</strong>模型选择工具的重要依据，要说明什么时候用、什么时候不用。</li>
+      <li><strong>Parameters Schema：</strong>通常用 JSON Schema 描述参数类型、必填字段、枚举和边界约束。</li>
+    </ul>
+
+    <h2>Function Calling 与 Structured Output</h2>
+    <p>
+      Structured Output 的目标是让模型输出固定格式的数据；Function Calling 的目标是让模型决定是否调用外部函数，
+      并生成可被工程代码执行的函数名和参数。
+    </p>
+
+    <h2>工程注意点</h2>
+    <ul>
+      <li>不要直接信任模型生成的 JSON。</li>
+      <li>需要解析、schema 校验、必填字段检查、类型检查和 enum 检查。</li>
+      <li>参数错误时，可以把错误作为 observation 返回给模型重试。</li>
+      <li>关键操作需要 fallback、用户追问或人工确认。</li>
+      <li>工具很多时，应做工具分组、router 或 retriever-based tool selection。</li>
+    </ul>
+
+    <aside class="callout">
+      <strong>面试回答</strong>
+      <p>
+        Function Calling 的本质不是模型执行函数，而是模型根据上下文生成结构化函数调用请求。
+        真实函数由应用侧代码执行，它是 Agent 工具调用的基础。
+      </p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/mcp/")}>MCP →</a>
+    </div>
+  </article>
+</NotesLayout>
