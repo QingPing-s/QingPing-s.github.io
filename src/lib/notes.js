@@ -2,17 +2,23 @@ import { sitePath } from "./site.js";
 
 export const standaloneNotes = [
   ["AI 概念坐标系", "agent/ai-concept-coordinate-system/"],
+  ["Agent 是什么", "agent/what-is-agent/"],
 ];
 
 export const noteSections = [
   {
-    id: "agent",
-    title: "Agent 基础",
+    id: "agent-patterns",
+    title: "Agent 范式",
     items: [
-      ["Agent 是什么", "agent/what-is-agent/"],
       ["ReAct", "agent/react/"],
       ["Plan-and-Execute", "agent/plan-and-execute/"],
       ["Reflection", "agent/reflection/"],
+    ],
+  },
+  {
+    id: "agent-engineering",
+    title: "Agent 工程",
+    items: [
       ["Tool Use", "agent/tool-use/"],
       ["Agent Harness", "agent/agent-harness/"],
     ],
@@ -45,11 +51,12 @@ export const noteSections = [
     id: "memory",
     title: "Memory",
     items: [
-      ["Short-term Memory", "memory/short-term-memory/"],
-      ["Long-term Memory", "memory/long-term-memory/"],
-      ["Mem0", "memory/mem0/"],
-      ["Letta", "memory/letta/"],
-      ["Zep", "memory/zep/"],
+      ["Memory 总览", "memory/overview/"],
+      ["短期记忆与 State", "memory/short-term-state/"],
+      ["长期记忆与 Store", "memory/long-term-store/"],
+      ["三类长期记忆", "memory/memory-types/"],
+      ["记忆压缩策略", "memory/compression/"],
+      ["写入时机与存储", "memory/write-storage/"],
     ],
   },
   {

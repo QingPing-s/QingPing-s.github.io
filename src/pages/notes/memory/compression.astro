@@ -1,0 +1,52 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="记忆压缩策略 | 技术笔记" description="Agent 长上下文和长期记忆维护中的滑动窗口、摘要、结构化记忆、RAG 记忆、去重和重要性过滤。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>记忆压缩策略</h1>
+      <p>Memory 系统不能无限保存上下文。压缩策略的目标是在控制 token、延迟和噪声的同时，保留对后续任务真正有用的信息。</p>
+      <div class="article-meta"><span>Compression</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <h2>滑动窗口压缩</h2>
+    <p>只保留最近 N 轮对话，较早历史直接丢弃。适合短对话和轻量任务，优点是简单、便宜、延迟低；缺点是早期关键信息容易丢失。</p>
+
+    <h2>摘要压缩 / ReSum</h2>
+    <p>把较早的历史对话压缩成摘要，同时保留最近几轮完整消息。适合长任务、多步 Agent、项目助手和研究助手。</p>
+    <pre class="flow-code"><code>System Prompt
++ 历史摘要
++ 最近 N 轮完整对话
++ 当前用户输入</code></pre>
+    <p>摘要应尽量结构化，例如当前目标、已完成步骤、关键约束、未解决问题和工具结果。</p>
+
+    <h2>分层摘要压缩</h2>
+    <p>把历史信息分成短期摘要、中期摘要和长期摘要。它适合论文助手、代码项目助手、长期学习助手等持续时间很长的任务。</p>
+
+    <h2>结构化记忆压缩</h2>
+    <p>不是把历史压缩成自然语言，而是压缩为机器可读字段，适合 Agent 状态管理、项目进度管理和任务追踪。</p>
+    <pre class="flow-code"><code>&#123;
+  "current_goal": "完成 Agent 项目",
+  "finished_steps": ["完成项目骨架", "实现工具调用"],
+  "constraints": ["Windows", "使用 DeepSeek API"],
+  "todo": ["加入评测模块", "完善 README"]
+&#125;</code></pre>
+
+    <h2>RAG 长期记忆压缩</h2>
+    <p>把重要历史写入外部存储，需要时再检索回来。不是所有内容都写入 memory，而是通过 write policy 判断哪些值得保存。</p>
+
+    <h2>去重压缩</h2>
+    <p>把重复出现的信息合并，只保留最新、最完整、最可信的一版。它适合长期记忆维护，防止 memory 中堆积大量重复信息。</p>
+
+    <h2>重要性过滤压缩</h2>
+    <p>根据重要性决定哪些保留、哪些丢弃。通常保留长期目标、稳定偏好、关键约束、任务进度、重要决策和工具执行结果；通常丢弃寒暄、重复内容、无后续价值的信息和错误尝试中的噪声。</p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/memory/write-storage/")}>写入时机与存储 →</a>
+    </div>
+  </article>
+</NotesLayout>

@@ -1,0 +1,48 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="三类长期记忆 | 技术笔记" description="Semantic、Episodic、Procedural memory 在 Agent 系统中的含义和实现方式。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>三类长期记忆</h1>
+      <p>长期记忆可以进一步分为语义记忆、情景记忆和程序性记忆。它们分别回答“知道什么”“经历过什么”和“如何做事”。</p>
+      <div class="article-meta"><span>Memory Types</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>Semantic Memory：语义记忆</h2>
+    <p>语义记忆保存事实和概念，例如“用户喜欢简洁回答”“某个项目使用 LangGraph”“组织要求中文输出”。它常用于个性化和上下文补全。</p>
+
+    <h3>Profile</h3>
+    <p>Profile 是持续更新的配置文件，通常是一个结构化 JSON 文档。优点是上下文集中，缺点是文档变大后更新容易出错。</p>
+
+    <h3>Collection</h3>
+    <p>Collection 是一组可新增、更新、删除的独立记忆文档。它更容易追加新事实，召回率可能更好，但会带来检索、去重、更新和删除复杂度。</p>
+
+    <h2>Episodic Memory：情景记忆</h2>
+    <p>情景记忆保存过去的事件、行动和任务经验。在 Agent 中，它常被实现为 few-shot examples：把过去成功的输入输出序列作为示例，让模型学会类似任务怎么做。</p>
+
+    <h3>难点</h3>
+    <p>情景记忆真正困难的地方不是存储示例，而是如何根据当前用户输入选择最相关的示例。可以用 LangGraph store、LangSmith Dataset 或自定义检索逻辑管理。</p>
+
+    <h2>Procedural Memory：程序性记忆</h2>
+    <p>程序性记忆保存“如何做事”的规则。在 Agent 中，它通常体现为模型权重、agent 代码、system prompt 或 instructions。</p>
+
+    <h3>实践方式</h3>
+    <p>实际工程中，Agent 很少直接修改自己的模型权重或代码，更常见的是通过 reflection、meta-prompting 或人工审核更新自己的 system prompt 和操作规则。</p>
+
+    <h2>如何选择</h2>
+    <ul>
+      <li>需要记住稳定事实和偏好时，优先使用语义记忆。</li>
+      <li>需要复用成功任务经验时，考虑情景记忆。</li>
+      <li>需要调整 Agent 行为方式时，考虑程序性记忆。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/memory/compression/")}>记忆压缩策略 →</a>
+    </div>
+  </article>
+</NotesLayout>

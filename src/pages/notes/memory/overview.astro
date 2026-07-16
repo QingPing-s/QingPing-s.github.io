@@ -1,0 +1,52 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Memory 总览 | 技术笔记" description="LangChain 与 LangGraph 中 Agent Memory 的基本分层：短期记忆、长期记忆和记忆类型。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>Memory 总览</h1>
+      <p>Agent memory 的目标不是“保存所有历史”，而是让 Agent 在合适的时机拿到对当前任务有价值的上下文、偏好、事实和经验。</p>
+      <div class="article-meta"><span>LangChain / LangGraph</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>先把 Memory 拆成三层问题</h2>
+    <ol>
+      <li><strong>当前对话需要什么上下文？</strong>放进短期记忆或 graph state。</li>
+      <li><strong>跨会话要记住什么？</strong>放进长期记忆或 store。</li>
+      <li><strong>记忆属于哪类？</strong>事实性知识、交互经验，还是行为规则。</li>
+    </ol>
+
+    <h2>短期记忆与长期记忆</h2>
+    <p>LangChain / LangGraph 文档通常按召回范围理解 memory：短期记忆只在一个 thread 或会话中有效；长期记忆跨 thread 保存用户级、组织级或应用级信息。</p>
+
+    <div class="comparison-grid">
+      <div>
+        <h3>短期记忆</h3>
+        <p>通常是当前对话历史、当前任务状态、上传文件、检索结果和中间 artifact。它更接近“当前工作台”。</p>
+      </div>
+      <div>
+        <h3>长期记忆</h3>
+        <p>通常是用户偏好、稳定事实、任务经验和行为规则。它更接近“跨会话知识库”。</p>
+      </div>
+    </div>
+
+    <h2>一个实用落地顺序</h2>
+    <p>实际做 Agent memory 时，可以先做短期记忆，让单次任务流程稳定；再加入少量高价值语义记忆；当任务流程稳定后，再考虑情景记忆和程序性指令更新。</p>
+
+    <h2>LangGraph 里的对应关系</h2>
+    <ul>
+      <li><strong>messages list：</strong>短期上下文，通常是当前对话消息。</li>
+      <li><strong>state：</strong>当前执行状态，比普通对话历史更结构化。</li>
+      <li><strong>checkpointer：</strong>线程级持久化，用来保存和恢复一个 thread 的状态。</li>
+      <li><strong>store / vector db：</strong>跨线程长期记忆，用来保存稳定事实、偏好和经验。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/memory/short-term-state/")}>短期记忆与 State →</a>
+    </div>
+  </article>
+</NotesLayout>

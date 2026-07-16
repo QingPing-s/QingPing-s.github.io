@@ -3,8 +3,16 @@ import NotesLayout from "../../../layouts/NotesLayout.astro";
 import { placeholderNotes } from "../../../lib/notes.js";
 
 export function getStaticPaths() {
+  const existing = new Set([
+    "overview",
+    "short-term-state",
+    "long-term-store",
+    "memory-types",
+    "compression",
+    "write-storage",
+  ]);
   return Object.entries(placeholderNotes)
-    .filter(([key]) => key.startsWith("memory/"))
+    .filter(([key]) => key.startsWith("memory/") && !existing.has(key.split("/")[1]))
     .map(([key, note]) => ({ params: { slug: key.split("/")[1] }, props: { note } }));
 }
 

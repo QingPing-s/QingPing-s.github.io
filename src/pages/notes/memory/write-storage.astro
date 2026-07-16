@@ -1,0 +1,59 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="写入时机与存储 | 技术笔记" description="Memory 应该在 hot path 还是 background 写入，以及长期记忆的 namespace、key 和存储结构。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>写入时机与存储</h1>
+      <p>Memory 系统不仅要决定保存什么，还要决定什么时候保存、保存到哪里、如何更新和删除。写入策略直接影响延迟、可控性和记忆质量。</p>
+      <div class="article-meta"><span>Write Policy / Storage</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>Hot Path 实时写入</h2>
+    <p>Hot path 是在用户请求处理过程中，同步判断是否保存记忆。它的好处是新记忆可以立刻用于后续交互，用户也更容易感知哪些信息被保存。</p>
+    <ul>
+      <li><strong>优点：</strong>实时生效、可解释、适合关键偏好和显式记忆。</li>
+      <li><strong>代价：</strong>增加延迟，让 Agent 同时承担任务执行和记忆管理。</li>
+      <li><strong>风险：</strong>如果判断不准，容易把临时信息写成长期记忆。</li>
+    </ul>
+
+    <h2>Background 后台写入</h2>
+    <p>Background 是把记忆生成作为后台任务异步执行。它不会阻塞主流程，更适合定期整理、摘要、去重和长期记忆维护。</p>
+    <ul>
+      <li><strong>优点：</strong>不增加主流程延迟，应用逻辑和记忆管理分离。</li>
+      <li><strong>挑战：</strong>需要决定写入频率、触发条件和冲突处理方式。</li>
+      <li><strong>触发方式：</strong>定时、事件触发、任务完成后触发或人工确认后触发。</li>
+    </ul>
+
+    <h2>写入策略</h2>
+    <p>不是所有内容都应该写入长期记忆。比较稳妥的 write policy 是只保存长期目标、稳定偏好、关键约束、任务状态、重要决策和可复用结论。</p>
+
+    <h2>存储结构</h2>
+    <p>LangGraph 的长期记忆通常以 JSON document 存在 store 中。组织方式通常包含 namespace 和 key。</p>
+    <ul>
+      <li><strong>namespace：</strong>类似文件夹，可包含 user id、org id、应用场景。</li>
+      <li><strong>key：</strong>类似文件名，用来定位一条具体记忆。</li>
+      <li><strong>value：</strong>具体记忆内容，可以是 profile、rules、facts、examples 或 task state。</li>
+    </ul>
+
+    <h2>一个简化结构</h2>
+    <pre class="flow-code"><code>namespace = (user_id, "agent-assistant")
+key = "memory-profile"
+value = &#123;
+  "facts": ["用户正在学习 AI Agent 工程"],
+  "preferences": ["回答简洁直接"],
+  "rules": ["代码修改前先说明范围"]
+&#125;</code></pre>
+
+    <h2>工程判断</h2>
+    <p>实时写入适合明确、高价值、马上会复用的记忆；后台写入适合总结、去重、压缩和长期维护。生产环境还需要权限控制、审计、删除入口和错误记忆纠正机制。</p>
+
+    <div class="article-next">
+      <span>回到总览</span>
+      <a href={sitePath("notes/memory/overview/")}>Memory 总览 →</a>
+    </div>
+  </article>
+</NotesLayout>

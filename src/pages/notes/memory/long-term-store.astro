@@ -1,0 +1,57 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="长期记忆与 Store | 技术笔记" description="长期记忆如何跨会话保存用户偏好、事实、经验和策略，并通过 store 组织。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>长期记忆与 Store</h1>
+      <p>长期记忆跨会话、跨 thread 保存用户级或应用级数据。它可以在任意时间被召回，用来让 Agent 具备连续性和个性化。</p>
+      <div class="article-meta"><span>Long-term Memory</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>长期记忆适合保存什么</h2>
+    <ul>
+      <li>用户偏好，例如喜欢简洁回答、偏好的语言和格式。</li>
+      <li>稳定事实，例如用户目标、项目背景、组织约束。</li>
+      <li>过去任务经验，例如某类任务的成功流程和失败原因。</li>
+      <li>可复用策略，例如回答规范、工具使用规则和审查标准。</li>
+    </ul>
+
+    <h2>两个核心问题</h2>
+    <ol>
+      <li><strong>要保存什么类型的记忆？</strong>事实、经验、偏好、规则还是任务状态。</li>
+      <li><strong>记忆应该什么时候更新？</strong>实时写入、后台写入、定时整理，还是人工确认后写入。</li>
+    </ol>
+
+    <h2>Store 与 Vector DB</h2>
+    <p>LangGraph 的长期记忆通常通过 store 保存结构化 JSON document，也可以结合向量数据库做语义检索。Store 更适合明确键值和命名空间管理，Vector DB 更适合大量文本记忆的相似检索。</p>
+
+    <h2>Namespace 与 Key</h2>
+    <p>长期记忆需要清晰组织。Namespace 类似文件夹，可以包含 user id、org id、应用场景；key 类似文件名，用来定位一条具体记忆。</p>
+
+    <pre class="flow-code"><code>namespace = (user_id, application_context)
+
+store.put(
+    namespace,
+    "profile",
+    &#123;
+        "preferences": ["short, direct language"],
+        "goals": ["learn AI Agent engineering"],
+    &#125;,
+)
+
+profile = store.get(namespace, "profile")
+items = store.search(namespace, query="language preferences")</code></pre>
+
+    <h2>生产环境注意点</h2>
+    <p>生产环境不应只依赖内存 store。需要数据库支持、权限控制、版本记录、去重策略和删除机制，否则长期记忆会逐渐变脏。</p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/memory/memory-types/")}>三类长期记忆 →</a>
+    </div>
+  </article>
+</NotesLayout>

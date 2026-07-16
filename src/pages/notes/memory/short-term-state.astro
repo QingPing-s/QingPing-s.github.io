@@ -1,0 +1,55 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="短期记忆与 State | 技术笔记" description="短期记忆如何在 LangGraph 中通过 state 和 checkpointer 管理当前会话上下文。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Memory</p>
+      <h1>短期记忆与 State</h1>
+      <p>短期记忆是线程范围记忆，只在一个会话或 thread 内有效。它通常保存当前对话历史和任务执行状态。</p>
+      <div class="article-meta"><span>Short-term Memory</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>短期记忆保存什么</h2>
+    <ul>
+      <li>当前对话消息历史。</li>
+      <li>上传文件、检索到的文档和生成的 artifact。</li>
+      <li>当前任务目标、步骤、工具返回结果和中间状态。</li>
+      <li>只对当前 thread 有意义的临时约束。</li>
+    </ul>
+
+    <h2>LangGraph 中的 State</h2>
+    <p>LangGraph 将短期记忆作为 agent state 的一部分管理。Graph 调用或步骤完成时，state 会被更新；每个节点执行时，也会读取当前 state 来决定下一步行为。</p>
+
+    <h2>Checkpointer 的作用</h2>
+    <p>Checkpointer 负责持久化线程级状态。它可以让一个 thread 的状态被保存，下一次继续执行，也可以支持失败恢复、人类介入和多轮对话。</p>
+
+    <h2>为什么要管理短期记忆</h2>
+    <ul>
+      <li>上下文窗口可能装不下完整历史。</li>
+      <li>过旧或离题的信息会干扰模型判断。</li>
+      <li>长上下文会增加延迟和成本。</li>
+      <li>工具调用消息需要保持结构完整，不能随意截断。</li>
+    </ul>
+
+    <h2>常见管理方法</h2>
+    <ul>
+      <li><strong>修剪消息：</strong>只保留最近消息或控制 token 数量。</li>
+      <li><strong>删除消息：</strong>永久删除无价值或过时消息。</li>
+      <li><strong>消息摘要：</strong>把早期对话总结成结构化摘要，保留最近几轮完整消息。</li>
+      <li><strong>自定义过滤：</strong>按任务、角色、工具结果或重要性保留上下文。</li>
+    </ul>
+
+    <aside class="callout">
+      <strong>工程注意点</strong>
+      <p>短期记忆压缩不能破坏 system message、tool call 和 tool response 的结构关系，否则模型和工具调用链路可能出错。</p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/memory/long-term-store/")}>长期记忆与 Store →</a>
+    </div>
+  </article>
+</NotesLayout>
