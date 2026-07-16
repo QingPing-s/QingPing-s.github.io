@@ -1,0 +1,104 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Plan-and-Execute | 技术笔记"
+  description="Plan-and-Execute 模式将规划和执行分离，适合长程复杂任务、代码重构和可审批的 Agent 工作流。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 基础</p>
+      <h1>Plan-and-Execute：先想清楚，再动手</h1>
+      <p>
+        Plan-and-Execute 的核心是把“规划”和“执行”显式分离。Planner 先理解任务并拆解步骤，
+        Executor 再按计划逐步执行；如果执行中遇到阻碍，优先修改全局计划，而不是在局部盲目试错。
+      </p>
+      <div class="article-meta"><span>Agent Pattern</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>为什么需要 Plan-and-Execute</h2>
+    <p>
+      ReAct 适合动态探索，但在长周期复杂任务里容易“边做边忘”。例如重构后端代码、运行测试、修复多处文件、
+      提交 PR 这类任务，如果模型只根据当前 Observation 临时决策，很容易遗漏步骤或在局部反复试错。
+    </p>
+
+    <figure class="article-figure">
+      <img src={sitePath("notes/plan-and-execute/react-limit.png")} alt="ReAct 在长任务中的局限" loading="lazy" />
+      <figcaption>ReAct 的局部循环适合探索，但长任务需要更强的全局计划。</figcaption>
+    </figure>
+
+    <h2>核心思想</h2>
+    <p>
+      Plan-and-Execute 的思路很直接：先列出完整步骤清单，再按图索骥逐步执行。
+      规划阶段关注目标拆解、依赖关系、执行顺序和风险边界；执行阶段关注具体动作、工具调用和结果验证。
+    </p>
+
+    <figure class="article-figure">
+      <img src={sitePath("notes/plan-and-execute/plan-execute-flow.png")} alt="Plan-and-Execute 的规划执行流程" loading="lazy" />
+      <figcaption>规划与执行分离后，Agent 更容易处理长程任务和审批边界。</figcaption>
+    </figure>
+
+    <h2>学术基础：Plan-and-Solve Prompting</h2>
+    <p>
+      Plan-and-Solve Prompting 的核心是“先理解问题、制定计划，再逐步求解”。
+      它针对 Zero-Shot CoT 中常见的计算错误和步骤遗漏，把提示词拆成两个阶段：
+      先 <em>Understand the problem and make a plan</em>，再 <em>Carry out the plan and solve step by step</em>。
+    </p>
+    <p>
+      这个范式虽然最初面向推理任务，但它提供了 Agent 中 Plan-and-Execute 的最小理论版本：
+      复杂任务不应该一头扎进细节，而应该先建立全局视角。
+    </p>
+
+    <h2>工程落地：Orchestrator 与 Subagents</h2>
+    <p>
+      在工程系统中，Plan-and-Execute 常表现为 Orchestrator-Subagents 架构。
+      Orchestrator 负责解析目标、拆解子任务、决定顺序和并行；Subagent 接收单一子任务后专注执行。
+      对高风险任务，可以在规划和执行之间加入 human-in-the-loop 审批。
+    </p>
+    <ul>
+      <li><strong>Orchestrator：</strong>负责规划、拆解、调度和汇总，不直接执行底层工具。</li>
+      <li><strong>Human-in-the-loop：</strong>在计划生成后、执行开始前确认风险和边界。</li>
+      <li><strong>Subagent / Executor：</strong>负责调用工具完成具体步骤，并把结果返回给主流程。</li>
+    </ul>
+
+    <h2>源码视角：Claude Code 的 Plan Mode</h2>
+    <p>
+      在真实代码 Agent 中，规划和执行不一定要拆成两个物理隔离的系统，也可以通过模式、权限和状态来实现。
+      例如 Plan 阶段进入只读模式，模型负责调研代码库并写出计划；用户确认后退出计划模式，恢复写权限，进入 Execute 阶段。
+    </p>
+    <ul>
+      <li><strong>Plan 阶段：</strong>只读调研代码库，生成任务拆解和执行计划。</li>
+      <li><strong>审批阶段：</strong>暂停流程，让用户确认计划和风险边界。</li>
+      <li><strong>Execute 阶段：</strong>严格按计划执行修改、测试和验证。</li>
+      <li><strong>Re-plan 阶段：</strong>如果执行受阻，修改计划而不是盲目继续。</li>
+    </ul>
+
+    <h2>适合使用的场景</h2>
+    <ul>
+      <li>长程代码修改、重构、迁移和多文件编辑。</li>
+      <li>需要审批边界的高风险操作。</li>
+      <li>任务步骤之间存在依赖关系，需要先后顺序。</li>
+      <li>需要把任务拆分给多个子 Agent 或多个工具执行。</li>
+    </ul>
+
+    <h2>局限与风险</h2>
+    <p>
+      Plan-and-Execute 的弱点是初始计划一旦错误，后续执行可能沿着错误方向走很久。
+      因此工程上必须保留 re-planning、阶段性验证和失败回滚机制。计划不是一次写死的脚本，
+      而是执行过程中可以更新的任务状态。
+    </p>
+
+    <h2>小结</h2>
+    <p>
+      Plan-and-Execute 的终极要义是：规划和执行是两种不同的认知任务。
+      显式分离它们，可以让 Agent 在长任务中更少跑偏，也更容易加入审批、回滚和可观测性。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/reflection/")}>Reflection →</a>
+    </div>
+  </article>
+</NotesLayout>

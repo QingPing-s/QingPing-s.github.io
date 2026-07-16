@@ -1,0 +1,130 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Agent 是什么 | 技术笔记"
+  description="从目标、状态、工具、记忆和反馈闭环理解 AI Agent 的组成、运行机制和工程边界。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 基础</p>
+      <h1>Agent 是什么</h1>
+      <p>
+        Agent 不是“会调用工具的聊天机器人”，而是一个围绕目标持续推进任务的执行系统。
+        它把 LLM 放进可观测、可控制、可恢复的任务闭环中，通过状态、工具、记忆和反馈不断调整下一步。
+      </p>
+      <div class="article-meta"><span>Agent 基础</span><span>约 10 分钟阅读</span></div>
+    </header>
+
+    <aside class="callout">
+      <strong>判断标准</strong>
+      <p>
+        判断一个系统是不是 Agent，不要先看它用了什么框架，也不要先看它会不会调用工具。
+        先看它是否围绕目标持续推进任务，是否根据中间状态改变行为，是否形成闭环而不是一次性生成。
+      </p>
+    </aside>
+
+    <h2>Agent 的核心能力</h2>
+    <p>一个实用 Agent 通常至少具备五类能力：</p>
+    <ul>
+      <li><strong>接收目标：</strong>不只是处理单轮输入，而是围绕任务目标推进。</li>
+      <li><strong>保留状态：</strong>不会每次都像第一次对话，能够记录任务进度和中间结果。</li>
+      <li><strong>动态决策：</strong>根据工具结果、失败原因和当前状态改变后续动作。</li>
+      <li><strong>调用工具：</strong>在需要时访问外部系统，例如搜索、数据库、文件、Shell 或 API。</li>
+      <li><strong>迭代尝试：</strong>在不确定环境中重试、修正、降级或切换策略。</li>
+    </ul>
+
+    <h2>Agent 的基本组成</h2>
+    <p>工程上可以把 Agent 拆成六个部分：</p>
+    <ol>
+      <li><strong>LLM：</strong>负责理解任务、推理、生成计划和做决策。</li>
+      <li><strong>Planner / Router：</strong>决定任务怎么拆、调用哪个工具、走哪条流程。</li>
+      <li><strong>Tools：</strong>连接外部环境，例如搜索、数据库、文件系统、代码执行和业务 API。</li>
+      <li><strong>Memory：</strong>保存历史对话、用户偏好、项目背景和长期上下文。</li>
+      <li><strong>State：</strong>记录当前任务执行到哪一步、已有结果、失败原因和下一步动作。</li>
+      <li><strong>Executor / Runtime：</strong>负责工具执行、参数校验、权限控制、错误重试和日志追踪。</li>
+    </ol>
+
+    <h2>Agent 的运行机制</h2>
+    <p>
+      Agent 的典型运行轨迹可以概括为：Reasoning → Action → Observation → Continue / Final Answer。
+      模型先推理当前需要什么信息或动作，然后发起工具调用；Runtime 执行工具并返回 Observation；
+      模型再根据 Observation 决定继续推进还是结束任务。
+    </p>
+
+    <figure class="article-figure">
+      <img src={sitePath("notes/agent/agent-loop.png")} alt="Agent 的 Reasoning Action Observation 运行机制" loading="lazy" />
+      <figcaption>Agent 的重点是系统闭环，而不是单次模型输出。</figcaption>
+    </figure>
+
+    <h2>Agent 和 Workflow 的区别</h2>
+    <p>
+      Workflow 是预先定义好的流程，适合路径明确、稳定性要求高的场景，例如客服、审批、知识库问答和表单处理。
+      Agent 则负责不确定环境下的动态推进，可以根据任务、工具结果和中间状态调整下一步。
+    </p>
+    <p>
+      实际工程里常把两者结合：用 Workflow 控制主流程，在局部节点里使用 Agent 做动态决策。
+      这样既保留生产系统的稳定性，也能处理局部不确定性。
+    </p>
+
+    <h2>常见 Agent 执行范式</h2>
+    <ul>
+      <li><strong>ReAct：</strong>Thought → Action → Observation，适合搜索、问答、代码调试和多轮工具调用。</li>
+      <li><strong>Plan-and-Execute：</strong>先由 Planner 生成计划，再由 Executor 按步骤执行，适合长程复杂任务。</li>
+      <li><strong>Workflow Agent：</strong>流程由框架控制，模型只在局部节点决策，适合稳定业务流。</li>
+      <li><strong>Multi-Agent：</strong>多个 Agent 分工协作，适合复杂项目，但通信成本和稳定性更难控制。</li>
+    </ul>
+
+    <h2>工具调用的安全边界</h2>
+    <p>
+      模型只应该负责生成调用意图，真正的安全边界必须由 Runtime 控制。工程上需要工具白名单、参数 schema 校验、
+      读写权限区分、人工确认、沙箱隔离、超时控制、失败重试和日志审计。
+    </p>
+
+    <figure class="article-figure">
+      <img src={sitePath("notes/agent/tool-calling.png")} alt="LLM Runtime Tool 三层工具调用边界" loading="lazy" />
+      <figcaption>LLM 决定调用意图，Runtime 校验与执行，Tool 返回真实结果。</figcaption>
+    </figure>
+
+    <h2>记忆如何实现</h2>
+    <p>
+      Agent 记忆通常由上下文窗口、结构化 State、外部存储和检索注入共同实现。
+      短期记忆保存当前会话、工具结果和任务状态；长期记忆保存跨会话仍有价值的信息，
+      例如用户偏好、项目背景、重要决策和历史任务进度。
+    </p>
+
+    <h2>如何让 Agent 更稳定</h2>
+    <p>Agent 的稳定性不能只靠模型能力，而要靠工程约束：</p>
+    <ul>
+      <li>关键流程用 Workflow 或状态机约束，不完全交给模型自由发挥。</li>
+      <li>工具参数用 JSON Schema 或 Pydantic 校验，非法参数不执行。</li>
+      <li>State 记录目标、已完成步骤、工具结果和失败原因。</li>
+      <li>工具失败、超时或无结果时，要有 retry、fallback 和明确错误返回。</li>
+      <li>高风险操作需要人工确认，代码执行放进 sandbox。</li>
+      <li>记录 planning、tool call、observation 和 final answer，方便定位问题。</li>
+    </ul>
+
+    <h2>如何评估 Agent</h2>
+    <p>
+      Agent 评估分结果评估和过程评估。结果层看任务成功率、答案正确率、格式正确率和用户满意度；
+      过程层看工具选择是否正确、参数是否有效、RAG 检索是否命中、失败后是否能恢复，以及 token 成本和响应延迟。
+    </p>
+    <p>
+      实际工程里应建立 evaluation harness，准备测试任务，记录 trace、tool call、observation 和最终答案，
+      再用规则或 LLM-as-Judge 做自动评估。
+    </p>
+
+    <h2>小结</h2>
+    <p>
+      Agent 的核心不是“模型更聪明”，而是“系统闭环更完整”。LLM 负责理解和决策，工具连接外部系统，
+      记忆保留上下文，Runtime 控制执行边界，反馈机制决定下一步怎么走。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/react/")}>ReAct →</a>
+    </div>
+  </article>
+</NotesLayout>

@@ -1,0 +1,121 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Reflection | 技术笔记"
+  description="Reflection 机制让 Agent 在失败后进行评估、复盘和修正，避免盲目重复同一个错误。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 基础</p>
+      <h1>Reflection：失败后如何更可靠</h1>
+      <p>
+        Reflection 是 Agent 在执行过程中对中间结果或最终结果进行自我检查、自我评估和修正的机制。
+        它回答的问题不是“下一步怎么做”，而是“这一步做得是否足够好，失败后应该怎样改”。
+      </p>
+      <div class="article-meta"><span>Agent Pattern</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <aside class="callout">
+      <strong>核心区别</strong>
+      <p>
+        Retry 通常是把同一步再执行一次；Reflection 会分析当前结果哪里不好，再决定修正答案、重新检索、
+        重新规划，还是调用其他工具。
+      </p>
+    </aside>
+
+    <h2>为什么 Agent 需要 Reflection</h2>
+    <p>
+      多步任务中，LLM 容易出现幻觉、遗漏和错误传播。很多失败不是因为模型完全不会，
+      而是因为它会反复在同一个地方跌倒。Reflection 相当于在工作流中增加质量检查节点，
+      让 Agent 在输出前先评估结果，必要时修正、重试或重新规划。
+    </p>
+
+    <h2>Reflection 放在工作流哪里</h2>
+    <p>
+      Reflection 可以放在最终输出前、工具调用后，或者关键节点之后。简单任务通常只在最终输出前做质量检查；
+      复杂任务可以在每个关键节点后加入 Reflection，用来判断当前结果是否足够好，是否需要改写 query、
+      重新检索或重新规划。
+    </p>
+
+    <h2>Self-Reflection 与 Critic Agent</h2>
+    <p>
+      Reflection 可以由同一个模型完成，也可以由另一个 Critic Agent 评估。工程上更实用的是混合方案：
+      格式、参数、测试这类确定性问题用规则或程序检查；语义完整性、事实一致性这类问题交给模型评估。
+    </p>
+
+    <h2>Reflexion 的核心组件</h2>
+    <p>Reflexion 论文中可以把 Agent 拆成四个部分：</p>
+    <ol>
+      <li><strong>Actor：</strong>负责根据当前状态生成具体行动或文本。</li>
+      <li><strong>Evaluator：</strong>负责判断当前尝试成功还是失败。</li>
+      <li><strong>Self-Reflection：</strong>在失败后总结哪里错了、为什么错、下次怎么改。</li>
+      <li><strong>Memory：</strong>保存反思结果，让下一轮 Actor 能带着教训继续尝试。</li>
+    </ol>
+    <p>
+      它的核心创新是用自然语言记忆替代简单标量反馈。Agent 不是“多想几步”，
+      而是把失败转化成可读、可复用的复盘笔记。
+    </p>
+
+    <h2>工程落地：Draft、Review、Refine</h2>
+    <p>
+      在工程系统里，Reflection 可以简化成 Draft → Review → Refine：
+      先生成初稿或初步方案，再审查、测试和挑错，最后带着 review 结果重写或重试。
+      这比盲目 retry 更可靠，也更容易接入测试、lint、评测和人工审查。
+    </p>
+
+    <h2>Claude Code 中的三层防御</h2>
+    <p>
+      在代码 Agent 中，Reflection 往往以防御机制的形式融入循环：工具错误被注入上下文，
+      熔断机制阻止无效重复，语言记忆总结保留失败经验。
+    </p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/reflection/reflexion-defense.png")} alt="Claude Code 中 Reflection 的错误注入、熔断和语言记忆机制" loading="lazy" />
+      <figcaption>错误注入、熔断和语言记忆让 Agent 能即时感知错误、停止无效重试并沉淀经验。</figcaption>
+    </figure>
+
+    <h3>工具错误注入</h3>
+    <p>
+      当工具执行失败时，系统不应该直接崩溃，而是把错误堆栈和失败原因以结构化形式写回上下文。
+      这相当于一个最小粒度的 Evaluator，让模型在下一轮必须正视并处理报错。
+    </p>
+
+    <h3>熔断机制</h3>
+    <p>
+      如果 Agent 连续多次发生同类错误或操作被拒绝，系统应停止循环并要求人工介入。
+      熔断的目的不是惩罚模型，而是防止它在死循环里消耗成本和扩大风险。
+    </p>
+
+    <h3>语言记忆总结</h3>
+    <p>
+      当上下文窗口接近上限时，系统不能简单截断旧消息，而应压缩历史并保留关键教训，
+      例如 Errors and fixes。这样下一轮任务仍能看到曾经犯过的错和对应修复方法。
+    </p>
+
+    <h2>成本与触发条件</h2>
+    <p>
+      Reflection 会增加成本和延迟，所以不能所有场景都无脑使用。比较合理的策略是条件触发：
+      复杂任务、高风险任务、低置信度结果、工具异常、测试失败或格式校验失败时再启用 Reflection。
+    </p>
+
+    <h2>如何评估 Reflection 是否有效</h2>
+    <p>
+      Reflection 是否有效应该通过实验对比，而不是主观判断。可以构造评测集，对比加入 Reflection 前后的任务成功率、
+      答案准确率、幻觉率、格式错误率、延迟和 token 成本。只有质量提升明显且成本可接受，才说明机制有效。
+    </p>
+
+    <h2>小结</h2>
+    <p>
+      ReAct 驱动 Agent 持续行动，Plan-and-Execute 让它统筹全局，Reflection 则让它在失败后复盘和修正。
+      一个可靠 Agent 不只是会行动，还要能发现行动错了，并把错误转化为下一次尝试的改进依据。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/tool-use/")}>Tool Use →</a>
+    </div>
+  </article>
+</NotesLayout>
