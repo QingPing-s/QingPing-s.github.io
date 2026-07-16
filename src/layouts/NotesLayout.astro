@@ -62,11 +62,53 @@ const notesIndexPath = noteHref("").replace(/\/$/, "");
     <div class="notes-content">
       <slot />
     </div>
+    <aside class="page-toc" aria-label="本页目录" data-page-toc hidden>
+      <strong>On this page</strong>
+      <nav></nav>
+    </aside>
   </div>
   <script>
     const sidebar = document.querySelector("[data-notes-sidebar]");
     if (sidebar && window.matchMedia("(max-width: 760px)").matches) {
       sidebar.removeAttribute("open");
+    }
+
+    const toc = document.querySelector("[data-page-toc]");
+    const tocNav = toc?.querySelector("nav");
+    const headings = Array.from(document.querySelectorAll(".notes-content h2, .notes-content h3"));
+    const slugCounts = new Map();
+
+    function slugify(text) {
+      const base = text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+        .replace(/^-+|-+$/g, "");
+      return base || "section";
+    }
+
+    if (toc && tocNav && headings.length > 0) {
+      const list = document.createElement("ol");
+      headings.forEach((heading) => {
+        if (!heading.id) {
+          const base = slugify(heading.textContent || "");
+          const count = slugCounts.get(base) || 0;
+          slugCounts.set(base, count + 1);
+          heading.id = count === 0 ? base : `${base}-${count + 1}`;
+        }
+
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent || "";
+        if (heading.tagName === "H3") {
+          item.classList.add("toc-subitem");
+        }
+        item.append(link);
+        list.append(item);
+      });
+      tocNav.append(list);
+      toc.hidden = false;
     }
   </script>
 </BaseLayout>

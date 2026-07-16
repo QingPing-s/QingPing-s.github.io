@@ -653,15 +653,16 @@ h3 {
 
 .notes-shell {
   display: grid;
-  width: min(1240px, 92vw);
+  width: min(1480px, 92vw);
   margin: 0 auto;
   padding: 42px 0 76px;
   align-items: start;
-  gap: 34px;
-  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 32px;
+  grid-template-columns: 250px minmax(0, 1fr) 220px;
 }
 
-.notes-sidebar {
+.notes-sidebar,
+.page-toc {
   position: sticky;
   top: 92px;
 }
@@ -771,6 +772,53 @@ h3 {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.page-toc {
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+
+.page-toc[hidden] {
+  display: none;
+}
+
+.page-toc strong {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--ink);
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+.page-toc ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+
+.page-toc a {
+  display: block;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.page-toc a:hover {
+  color: var(--teal-dark);
+}
+
+.page-toc .toc-subitem {
+  padding-left: 12px;
+}
+
+.page-toc .toc-subitem a {
+  font-size: 0.86rem;
 }
 
 .notes-directory-grid {
@@ -1269,6 +1317,10 @@ pre code {
 
   .notes-sidebar {
     position: static;
+  }
+
+  .page-toc {
+    display: none;
   }
 
   .notes-nav {
