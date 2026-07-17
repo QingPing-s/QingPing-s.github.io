@@ -1,0 +1,44 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Tool Call Accuracy | 技术笔记" description="评估 Agent 是否选择了正确工具，并传入正确参数。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Tool Call Accuracy</h1>
+      <p>Tool Call Accuracy 评估 Agent 在工具调用阶段是否选对工具、填对参数、遵守调用边界。</p>
+      <div class="article-meta"><span>Agent Tool Use</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>拆成三个层次</h2>
+    <ul>
+      <li><strong>工具选择：</strong>是否调用了该调用的工具，是否误用了无关工具。</li>
+      <li><strong>参数正确性：</strong>必填参数是否完整，实体、时间、ID、过滤条件是否正确。</li>
+      <li><strong>调用边界：</strong>是否在需要确认时暂停，是否避免危险或越权操作。</li>
+    </ul>
+
+    <h2>常见指标</h2>
+    <ul>
+      <li><strong>Tool Selection Accuracy：</strong>工具名是否匹配参考答案。</li>
+      <li><strong>Argument Precision：</strong>传入参数中有多少是正确且必要的。</li>
+      <li><strong>Argument Recall：</strong>必要参数是否被完整填入。</li>
+      <li><strong>Tool Call F1：</strong>综合工具调用的 precision 和 recall。</li>
+    </ul>
+
+    <h2>为什么不能只看最终答案</h2>
+    <p>Agent 有时能用错误工具绕路得到正确答案，但这在生产环境里会带来成本、延迟和安全问题。工具调用评估能提前暴露这些隐患。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/" target="_blank" rel="noreferrer">Ragas: Agent and tool-use metrics</a></li>
+      <li><a href="https://docs.langchain.com/langsmith/evaluation-approaches" target="_blank" rel="noreferrer">LangSmith: Application-specific evaluation approaches</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/trajectory-evaluation/")}>Trajectory Evaluation →</a>
+    </div>
+  </article>
+</NotesLayout>

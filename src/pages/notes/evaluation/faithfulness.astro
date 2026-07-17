@@ -1,0 +1,45 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Faithfulness | 技术笔记" description="评估回答中的事实声明是否能被检索上下文支持。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Faithfulness</h1>
+      <p>Faithfulness 评估回答是否忠实于给定上下文，核心是降低 RAG 或 Agent 回答中的无依据生成。</p>
+      <div class="article-meta"><span>Groundedness</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>它关注什么</h2>
+    <p>如果回答里每个关键声明都能从检索上下文或工具返回中推出，回答就是 faithful。反之，即使答案语言流畅，也可能是不可信的。</p>
+
+    <h2>计算思路</h2>
+    <ol>
+      <li>把回答拆成多个事实声明。</li>
+      <li>逐条检查每个声明是否被上下文支持。</li>
+      <li>用“被支持声明数 / 总声明数”得到分数。</li>
+    </ol>
+
+    <h2>适用场景</h2>
+    <ul>
+      <li>RAG 问答。</li>
+      <li>基于工具返回结果生成总结。</li>
+      <li>需要引用依据的技术、法律、医疗、财务类回答。</li>
+    </ul>
+
+    <h2>容易混淆</h2>
+    <p>Faithfulness 不等于答案正确性。上下文如果本身缺失或错误，回答忠实于上下文也可能不是客观真相。因此它通常要和检索召回、答案相关性一起看。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/" target="_blank" rel="noreferrer">Ragas: Faithfulness</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/answer-relevance/")}>Answer Relevance →</a>
+    </div>
+  </article>
+</NotesLayout>

@@ -1,0 +1,41 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Task Success | 技术笔记" description="用任务完成度评估 Agent 是否真正解决用户目标。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Task Success</h1>
+      <p>Task Success 评估 Agent 是否完成了用户目标，是 Agent 评估里最接近业务结果的一层。</p>
+      <div class="article-meta"><span>Outcome Metric</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>它回答什么问题</h2>
+    <p>不是问“回答看起来好不好”，而是问“任务是否真的完成”。例如：代码是否修好、订单是否创建、资料是否检索并正确总结、用户限制是否被遵守。</p>
+
+    <h2>常见打分方式</h2>
+    <ul>
+      <li><strong>二分类：</strong>成功 / 失败，适合自动化回归测试。</li>
+      <li><strong>等级评分：</strong>0 到 3 或 1 到 5，区分完全成功、部分成功、失败。</li>
+      <li><strong>约束检查：</strong>目标完成、格式正确、没有越权、没有遗漏关键条件。</li>
+      <li><strong>端到端测试：</strong>把 Agent 放进真实或模拟环境，检查最终状态是否符合预期。</li>
+    </ul>
+
+    <h2>适用场景</h2>
+    <p>任务完成度适合放在评估链路最上层。它可以作为上线门槛，但不能单独定位问题；如果失败，还需要结合工具调用、检索、轨迹和最终回答质量继续拆解。</p>
+
+    <h2>注意点</h2>
+    <ul>
+      <li>任务定义必须明确，否则评估会变成主观印象。</li>
+      <li>复杂任务要拆成子目标，避免只有一个粗粒度分数。</li>
+      <li>成功不代表过程可靠，路径可能过长、成本过高或存在安全风险。</li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/rubric/")}>Rubric →</a>
+    </div>
+  </article>
+</NotesLayout>

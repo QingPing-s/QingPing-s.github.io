@@ -1,0 +1,42 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Recall@K | 技术笔记" description="评估检索器在 Top-K 结果中找回相关资料的能力。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Recall@K</h1>
+      <p>Recall@K 衡量检索系统在前 K 个结果中覆盖相关资料的能力，是 RAG 和搜索型 Agent 的基础指标。</p>
+      <div class="article-meta"><span>Retrieval Metric</span><span>约 4 分钟阅读</span></div>
+    </header>
+
+    <h2>公式直觉</h2>
+    <p>如果某个问题一共有 R 个相关文档，Top-K 里找回了 r 个，则 <code>Recall@K = r / R</code>。</p>
+
+    <h2>它回答什么问题</h2>
+    <p>Recall@K 关注“有没有把该找的东西找回来”。它不太关心排序位置，只要相关文档出现在 Top-K 里就算找回。</p>
+
+    <h2>适用场景</h2>
+    <ul>
+      <li>评估向量检索、关键词检索、混合检索。</li>
+      <li>比较不同 embedding 模型、chunk 策略和 Top-K 设置。</li>
+      <li>定位 RAG 回答失败是不是因为检索阶段漏召回。</li>
+    </ul>
+
+    <h2>注意点</h2>
+    <p>Recall@K 需要标注相关文档集合。如果没有 reference contexts，就只能用人工标注、弱标注或 LLM 辅助判断近似估计。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/" target="_blank" rel="noreferrer">Pinecone: RAG Evaluation</a></li>
+      <li><a href="https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/" target="_blank" rel="noreferrer">Ragas: Context Recall</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/mrr/")}>MRR →</a>
+    </div>
+  </article>
+</NotesLayout>

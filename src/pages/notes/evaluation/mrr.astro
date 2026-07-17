@@ -1,0 +1,39 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="MRR | 技术笔记" description="用 Mean Reciprocal Rank 评估第一个相关结果是否排得足够靠前。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>MRR</h1>
+      <p>MRR 关注第一个相关结果出现的位置，适合评估“用户最先看到的结果是否正确”。</p>
+      <div class="article-meta"><span>Ranking Metric</span><span>约 4 分钟阅读</span></div>
+    </header>
+
+    <h2>公式直觉</h2>
+    <p>对每个查询，找到第一个相关结果的排名 <code>rank</code>，该查询分数是 <code>1 / rank</code>。多个查询取平均就是 MRR。</p>
+
+    <h2>例子</h2>
+    <ul>
+      <li>第 1 位就是相关结果，分数是 1。</li>
+      <li>第 2 位才是相关结果，分数是 0.5。</li>
+      <li>前面都没有相关结果，分数是 0。</li>
+    </ul>
+
+    <h2>和 Recall@K 的区别</h2>
+    <p>Recall@K 看有没有召回，MRR 看第一个相关结果排得多靠前。RAG 场景中，如果上下文窗口有限，MRR 往往比单纯召回更能反映首屏质量。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://www.pinecone.io/learn/offline-evaluation/" target="_blank" rel="noreferrer">Pinecone: Evaluation Measures in Information Retrieval</a></li>
+      <li><a href="https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr" target="_blank" rel="noreferrer">Evidently: Mean Reciprocal Rank</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/tool-call-accuracy/")}>Tool Call Accuracy →</a>
+    </div>
+  </article>
+</NotesLayout>

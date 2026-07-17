@@ -1,0 +1,44 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Answer Relevance | 技术笔记" description="评估回答是否真正回应了用户问题，而不是答非所问或堆砌无关信息。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Answer Relevance</h1>
+      <p>Answer Relevance 评估回答和用户问题之间的相关性，重点是“有没有回答用户真正问的问题”。</p>
+      <div class="article-meta"><span>Response Quality</span><span>约 4 分钟阅读</span></div>
+    </header>
+
+    <h2>高分回答的特征</h2>
+    <ul>
+      <li>直接回应用户问题。</li>
+      <li>没有遗漏关键约束。</li>
+      <li>没有加入大量无关背景。</li>
+      <li>输出粒度和用户需求匹配。</li>
+    </ul>
+
+    <h2>低分回答的常见原因</h2>
+    <ul>
+      <li>只回答了相邻主题，没有回答原问题。</li>
+      <li>回答过宽，堆了很多用户没有要求的信息。</li>
+      <li>忽略用户给出的限制条件。</li>
+      <li>格式正确但内容不解决问题。</li>
+    </ul>
+
+    <h2>和 Faithfulness 的区别</h2>
+    <p>Faithfulness 看回答是否被上下文支持；Answer Relevance 看回答是否对准问题。一个回答可以很忠实但不相关，也可以相关但包含无依据内容。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://docs.ragas.io/en/v0.1.21/concepts/metrics/answer_relevance.html" target="_blank" rel="noreferrer">Ragas: Answer Relevance</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/recall-at-k/")}>Recall@K →</a>
+    </div>
+  </article>
+</NotesLayout>

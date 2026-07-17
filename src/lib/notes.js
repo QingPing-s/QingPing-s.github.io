@@ -69,12 +69,15 @@ export const noteSections = [
     id: "evaluation",
     title: "Agent Evaluation",
     items: [
-      ["LLM-as-Judge", "evaluation/llm-as-judge/"],
+      ["Task Success", "evaluation/task-success/"],
       ["Rubric", "evaluation/rubric/"],
+      ["LLM-as-Judge", "evaluation/llm-as-judge/"],
       ["Faithfulness", "evaluation/faithfulness/"],
       ["Answer Relevance", "evaluation/answer-relevance/"],
       ["Recall@K", "evaluation/recall-at-k/"],
       ["MRR", "evaluation/mrr/"],
+      ["Tool Call Accuracy", "evaluation/tool-call-accuracy/"],
+      ["Trajectory Evaluation", "evaluation/trajectory-evaluation/"],
     ],
   },
   {

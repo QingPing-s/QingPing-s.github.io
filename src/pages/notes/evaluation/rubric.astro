@@ -1,0 +1,45 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Rubric | 技术笔记" description="用 Rubric 把主观判断转成可复用、可复核的评分标准。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Rubric</h1>
+      <p>Rubric 是一组明确评分标准，用来约束人类评审或 LLM-as-Judge 的判断口径。</p>
+      <div class="article-meta"><span>Evaluation Criteria</span><span>约 5 分钟阅读</span></div>
+    </header>
+
+    <h2>为什么需要 Rubric</h2>
+    <p>Agent 输出经常不是单一标准答案。Rubric 可以把“好不好”拆成多个可检查维度，例如正确性、完整性、引用依据、工具使用、安全边界和输出格式。</p>
+
+    <h2>一个可用的 Rubric 结构</h2>
+    <ul>
+      <li><strong>目标：</strong>本次任务应该完成什么。</li>
+      <li><strong>输入：</strong>用户问题、上下文、工具返回、参考答案。</li>
+      <li><strong>评分维度：</strong>每个维度独立打分，避免混成一个印象分。</li>
+      <li><strong>分数定义：</strong>明确 0、1、2、3 分分别代表什么。</li>
+      <li><strong>失败条件：</strong>列出一票否决项，例如捏造事实、越权调用工具、泄露敏感信息。</li>
+    </ul>
+
+    <h2>设计原则</h2>
+    <ul>
+      <li>维度少而清晰，优先覆盖高风险错误。</li>
+      <li>每个分数要有可观察证据，不写空泛形容词。</li>
+      <li>先用人工样本校准，再让 LLM 批量评审。</li>
+      <li>评分 prompt 要要求输出结构化结果，便于统计和回归。</li>
+    </ul>
+
+    <aside class="callout">
+      <strong>工程判断</strong>
+      <p>Rubric 本身也是产品需求的一部分。没有稳定 Rubric，评估结果很难比较不同 prompt、模型或 Agent 架构。</p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/llm-as-judge/")}>LLM-as-Judge →</a>
+    </div>
+  </article>
+</NotesLayout>

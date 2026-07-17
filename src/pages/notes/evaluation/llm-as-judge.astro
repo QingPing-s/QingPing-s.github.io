@@ -1,0 +1,52 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="LLM-as-Judge | 技术笔记" description="用大模型作为评审器，对开放式回答和 Agent 行为进行自动化评估。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>LLM-as-Judge</h1>
+      <p>LLM-as-Judge 用另一个模型评估回答、工具调用或执行轨迹，适合没有严格标准答案的开放任务。</p>
+      <div class="article-meta"><span>Model-Graded Eval</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>适合评什么</h2>
+    <ul>
+      <li>答案是否满足用户意图。</li>
+      <li>回答是否基于给定上下文，是否存在幻觉。</li>
+      <li>输出是否遵守 Rubric、格式和安全要求。</li>
+      <li>Agent 的工具调用路径是否合理。</li>
+    </ul>
+
+    <h2>基本流程</h2>
+    <pre class="flow-code"><code>测试样本
+  → 被测 Agent 输出
+  → Judge Prompt + Rubric
+  → 结构化评分
+  → 人工抽检与校准</code></pre>
+
+    <h2>常见风险</h2>
+    <ul>
+      <li><strong>评审偏差：</strong>Judge 模型可能偏好长答案、熟悉风格或自身生成的表达。</li>
+      <li><strong>不稳定：</strong>prompt、模型版本和温度变化都会影响分数。</li>
+      <li><strong>可解释性不足：</strong>只给总分不够，需要输出理由和失败标签。</li>
+      <li><strong>不能替代人工：</strong>上线前仍需要人工抽检关键样本。</li>
+    </ul>
+
+    <h2>工程建议</h2>
+    <p>把 Judge 输出限制为 JSON 或固定选项，并保留原始输入、Agent 输出、评分理由和模型版本。这样才能做回归分析，而不是只看一次性的平均分。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://github.com/openai/evals/blob/main/docs/eval-templates.md" target="_blank" rel="noreferrer">OpenAI Evals: model-graded eval template</a></li>
+      <li><a href="https://docs.evidentlyai.com/metrics/customize_llm_judge" target="_blank" rel="noreferrer">Evidently: Configure LLM Judges</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/faithfulness/")}>Faithfulness →</a>
+    </div>
+  </article>
+</NotesLayout>

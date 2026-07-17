@@ -1,0 +1,58 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="Trajectory Evaluation | 技术笔记" description="评估 Agent 从输入到最终答案之间的完整执行路径。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Trajectory Evaluation</h1>
+      <p>Trajectory Evaluation 评估 Agent 的完整执行路径，而不只看最后答案。</p>
+      <div class="article-meta"><span>Agent Trace</span><span>约 6 分钟阅读</span></div>
+    </header>
+
+    <h2>轨迹包含什么</h2>
+    <ul>
+      <li>模型消息和中间决策。</li>
+      <li>工具调用顺序、参数和返回结果。</li>
+      <li>重试、降级、反思和人工确认节点。</li>
+      <li>最终答案以及它依赖的证据链。</li>
+    </ul>
+
+    <h2>两类评估方式</h2>
+    <div class="comparison-grid">
+      <div>
+        <h3>Trajectory Match</h3>
+        <p>和参考轨迹做确定性比较，适合工具顺序明确、流程强约束的任务。</p>
+      </div>
+      <div>
+        <h3>LLM Judge</h3>
+        <p>用 Rubric 评价路径质量，适合存在多条合理路径的开放任务。</p>
+      </div>
+    </div>
+
+    <h2>典型失败模式</h2>
+    <ul>
+      <li>调用了错误工具，但最终答案碰巧正确。</li>
+      <li>工具参数错误，导致空结果或错误结果被继续使用。</li>
+      <li>步骤顺序不合理，例如先写入再验证。</li>
+      <li>陷入循环，成本和延迟异常升高。</li>
+      <li>绕过确认节点，执行了高风险动作。</li>
+    </ul>
+
+    <h2>工程建议</h2>
+    <p>Agent 系统需要保留 trace。没有 trace，就只能评估最终答案；有 trace，才能定位是检索失败、工具选择失败、参数失败、规划失败，还是最终表达失败。</p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://docs.langchain.com/langsmith/trajectory-evals" target="_blank" rel="noreferrer">LangSmith: trajectory evaluations</a></li>
+      <li><a href="https://docs.langchain.com/oss/python/langchain/test/evals" target="_blank" rel="noreferrer">AgentEvals: trajectory match evaluator</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>返回目录</span>
+      <a href={sitePath("notes/")}>技术笔记 →</a>
+    </div>
+  </article>
+</NotesLayout>
