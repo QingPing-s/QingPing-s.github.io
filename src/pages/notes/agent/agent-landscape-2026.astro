@@ -1,0 +1,356 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="2026 年 Agent 技术全景 | 技术笔记"
+  description="从 ReAct、Workflow、Harness、MCP、A2A、Memory 到 Agent Evals，梳理 2026 年 AI Agent 工程系统的关键技术坐标。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent 工程</p>
+      <h1>2026 年 Agent 技术全景：从 ReAct 到 Harness、MCP 与长期自治</h1>
+      <p>
+        截至 2026 年 7 月，AI Agent 的竞争重点已经不再是“模型能不能调用工具”，
+        而是 Agent 能否在真实环境中持续工作、管理上下文、恢复失败、接受评测，并安全地完成复杂任务。
+      </p>
+      <div class="article-meta"><span>Agent Engineering</span><span>约 18 分钟阅读</span></div>
+    </header>
+
+    <h2>一、什么是 AI Agent？</h2>
+    <p>传统大语言模型通常采用一次输入、一次输出的工作方式：</p>
+    <pre class="flow-code"><code>用户问题 → 大语言模型 → 文本答案</code></pre>
+    <p>而 Agent 会围绕目标持续执行“思考、行动、观察、修正”循环：</p>
+    <pre class="flow-code"><code>用户目标
+   ↓
+分析与规划
+   ↓
+调用工具
+   ↓
+观察执行结果
+   ↓
+判断是否完成
+   ├── 否：修正方案并继续执行
+   └── 是：输出最终结果</code></pre>
+    <p>
+      因此，Agent 不只是一个聊天机器人，而是一个由大语言模型驱动、
+      能够使用工具并对执行结果进行反馈控制的软件系统。
+      现代 Agent 通常需要规划、工具调用、状态维护、协作和多步骤任务执行能力。
+    </p>
+
+    <h2>二、Agent 技术经历了怎样的演进？</h2>
+    <p>Agent 技术大致经历了四个阶段：Prompt Agent、Tool-Calling Agent、Workflow Agent 和 Long-Horizon Agent。</p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/agent-landscape/agent-evolution-roadmap.png")} alt="Agent 技术演进路线图" loading="lazy" />
+      <figcaption>从简单提示词驱动，到工具增强、流程可控，再到可恢复、可验证、可持续执行的长期自治系统。</figcaption>
+    </figure>
+
+    <h3>1. Prompt Agent</h3>
+    <p>最早期的 Agent 主要依靠复杂 Prompt，让模型按照指定步骤输出结果。</p>
+    <pre class="flow-code"><code>Prompt + LLM → Response</code></pre>
+    <p>这种方式实现简单，但存在状态不可控、错误无法恢复和工具能力有限等问题。</p>
+
+    <h3>2. Tool-Calling Agent</h3>
+    <p>模型开始根据任务动态调用搜索、数据库、代码执行和外部 API。</p>
+    <pre class="flow-code"><code>LLM → Tool Call → Tool Result → LLM</code></pre>
+    <p>ReAct、Function Calling 和 Tool Use 都属于这一阶段的代表技术。</p>
+
+    <h3>3. Workflow Agent</h3>
+    <p>开发者通过状态图、条件路由和固定节点约束 Agent 的执行过程。</p>
+    <pre class="flow-code"><code>输入
+ ↓
+任务分析
+ ↓
+工具执行
+ ↓
+结果验证
+ ↓
+失败重试或成功返回</code></pre>
+    <p>
+      LangGraph 等框架开始承担工作流编排、状态持久化、Human-in-the-loop
+      和故障恢复等职责。它更接近“可恢复的运行时”，而不是只负责包一层模型调用。
+    </p>
+
+    <h3>4. Long-Horizon Agent</h3>
+    <p>
+      2026 年的重点正在转向可以执行分钟级、小时级甚至更长任务的 Agent。
+      这类 Agent 不仅需要模型能力，还需要可持久化任务状态、受控执行环境、上下文压缩、
+      长期记忆、失败恢复、断点续跑、权限控制、人工审批、Trace 和评测系统。
+    </p>
+
+    <h2>三、2026 年最值得关注的八项 Agent 技术</h2>
+    <h3>1. Long-Horizon Agent：长时间任务执行</h3>
+    <p>
+      传统 Agent 通常只能完成几次工具调用，一旦上下文过长、网络中断或进程重启，任务就容易失败。
+      Long-Horizon Agent 的目标是让系统可以拆解复杂目标、保存任务进度、局部重试、进程重启后继续运行，
+      并根据中间结果动态调整计划。
+    </p>
+    <p>这类 Agent 的关键不是“无限循环”，而是<strong>可恢复、可验证的持续执行</strong>。</p>
+
+    <h3>2. Agent Harness：模型之外的执行系统</h3>
+    <p>Harness 可以理解为 Agent 的“操作系统”。模型负责推理和决策，而 Harness 负责控制模型如何工作。</p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/agent-landscape/agent-harness-architecture.png")} alt="Agent Harness 架构图" loading="lazy" />
+      <figcaption>Harness 负责执行控制、状态、权限、安全、Trace 和 Evals，把模型决策落到可控环境中。</figcaption>
+    </figure>
+
+    <pre class="flow-code"><code>Agent Harness
+├── System Instructions
+├── Tool Registry
+├── Workspace
+├── Sandbox
+├── State Management
+├── Retry Policy
+├── Permission Control
+├── Human Approval
+├── Trace Logging
+└── Evaluation</code></pre>
+    <p>一个生产级 Harness 通常需要回答这些问题：</p>
+    <ul>
+      <li>Agent 可以访问哪些文件？</li>
+      <li>哪些工具允许自动调用？</li>
+      <li>删除文件、发邮件或执行命令是否需要确认？</li>
+      <li>工具执行失败后如何重试？</li>
+      <li>任务如何暂停和恢复？</li>
+      <li>如何防止 Agent 陷入无限循环？</li>
+      <li>如何判断最终结果是否合格？</li>
+    </ul>
+    <p>因此，Agent 的实际能力不仅取决于模型，也高度依赖 Harness 的设计。</p>
+
+    <h3>3. Context Engineering：上下文工程</h3>
+    <p>
+      Prompt Engineering 关注“如何写好一条提示词”，而 Context Engineering 关注：
+      在每一个执行步骤中，应该向模型提供哪些信息。
+    </p>
+    <p>
+      Agent 的上下文可能包括当前用户目标、已完成任务、下一步计划、工具调用结果、历史错误、
+      项目代码、长期记忆、安全规则和剩余 Token。把所有内容都塞进上下文会造成成本增加、
+      注意力分散和关键信息丢失。
+    </p>
+    <p>现代 Agent 通常采用 Compaction、Retrieval、Note Taking 和 Context Isolation 来控制上下文。</p>
+
+    <h3>4. Memory：从聊天记录到结构化记忆</h3>
+    <p>Memory 不等于简单保存历史聊天。生产级 Agent 通常需要区分多种记忆：</p>
+    <table>
+      <thead>
+        <tr><th>记忆类型</th><th>主要作用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Working Memory</td><td>保存当前任务的临时状态</td></tr>
+        <tr><td>Episodic Memory</td><td>记录过去发生过的任务和结果</td></tr>
+        <tr><td>Semantic Memory</td><td>保存稳定的事实、规则和用户偏好</td></tr>
+        <tr><td>Procedural Memory</td><td>保存完成某类任务的操作流程</td></tr>
+        <tr><td>Artifact Memory</td><td>通过文件、代码和报告保存外部状态</td></tr>
+      </tbody>
+    </table>
+    <p>
+      一个完整的 Memory 系统还需要处理记忆提取、去重合并、冲突检测、来源追踪、
+      置信度、时间衰减、权限隐私和用户删除记忆。
+    </p>
+
+    <h3>5. Skills：将能力封装为可复用技能</h3>
+    <p>
+      早期 Agent 通常把所有规则、案例和操作步骤写进 System Prompt。
+      随着任务越来越复杂，System Prompt 会不断膨胀，导致上下文成本过高、指令冲突、更新困难和技能无法独立测试。
+    </p>
+    <p>Skills 的思路是将特定能力封装为独立、可版本管理的资源包：</p>
+    <pre class="flow-code"><code>skills/
+├── github-pr-review/
+│   ├── SKILL.md
+│   ├── templates/
+│   └── scripts/
+├── data-analysis/
+│   ├── SKILL.md
+│   └── examples/
+└── release-check/
+    ├── SKILL.md
+    └── checklist.md</code></pre>
+    <p>Agent 只在需要时加载对应 Skill，从而实现按需加载、版本管理、独立测试、团队共享和流程复用。</p>
+
+    <h3>6. MCP：统一连接工具和数据</h3>
+    <p>
+      Model Context Protocol，简称 MCP，是连接 AI 应用与外部系统的开放标准。
+      它解决的是工具接入碎片化问题：每个 Agent 框架不再需要为数据库、文件系统、GitHub 和搜索服务单独开发适配器。
+    </p>
+    <pre class="flow-code"><code>Agent / MCP Client
+        ↓
+    MCP Protocol
+        ↓
+MCP Server
+├── Tools
+├── Resources
+└── Prompts</code></pre>
+    <p>
+      需要注意的是，MCP 解决的是<strong>工具和上下文接入问题</strong>，
+      并不负责完整的 Agent 任务规划、状态管理和多 Agent 协作。
+    </p>
+
+    <h3>7. A2A：跨 Agent 通信</h3>
+    <p>
+      MCP 解决 Agent 如何使用工具，而 A2A 解决 Agent 如何与其他 Agent 协作。
+      Agent2Agent Protocol 面向独立 Agent 系统之间的通信，可支持能力发现、任务委派、
+      状态更新、消息交换、结果返回和长任务协作。
+    </p>
+
+    <figure class="article-figure wide">
+      <img src={sitePath("notes/agent-landscape/mcp-vs-a2a.png")} alt="MCP 与 A2A 对比图" loading="lazy" />
+      <figcaption>MCP 偏向 Agent-to-Tools，A2A 偏向 Agent-to-Agent：一个连接工具和数据，一个组织 Agent 协作。</figcaption>
+    </figure>
+
+    <pre class="flow-code"><code>用户
+ ↓
+主 Agent
+ ├── 调用 MCP 工具
+ ├── 委派给数据分析 Agent
+ ├── 委派给代码 Agent
+ └── 委派给审核 Agent</code></pre>
+    <p>可以将两者简单理解为：</p>
+    <pre class="flow-code"><code>MCP：Agent 如何连接工具
+A2A：Agent 如何连接 Agent</code></pre>
+
+    <h3>8. Agent Evals：从回答评分到完整轨迹评测</h3>
+    <p>
+      普通 LLM 评测通常只检查最终回答是否正确。但 Agent 的最终结果可能正确，
+      执行过程却存在严重问题，例如调用了错误工具、执行了危险操作、使用过多 Token、
+      进行了大量无效搜索，或者偶然得到了正确答案。
+    </p>
+    <p>因此，Agent 评测需要同时覆盖：</p>
+    <ul>
+      <li><strong>Result Evaluation：</strong>最终结果是否正确。</li>
+      <li><strong>Trajectory Evaluation：</strong>工具选择、调用顺序和中间决策是否合理。</li>
+      <li><strong>Safety Evaluation：</strong>是否执行越权、危险或不可逆操作。</li>
+      <li><strong>Efficiency Evaluation：</strong>Token、延迟、工具调用次数和计算成本是否合理。</li>
+      <li><strong>Robustness Evaluation：</strong>在工具失败、网络异常和输入变化时是否仍能完成任务。</li>
+    </ul>
+
+    <h2>四、现代 Agent 的整体架构</h2>
+    <p>一个较完整的生产级 Agent 可以采用以下架构：</p>
+    <pre class="flow-code"><code>用户目标
+  ↓
+API Gateway
+  ↓
+Agent Harness
+  ├── Planner
+  ├── Memory Manager
+  ├── Context Manager
+  ├── Evaluator
+  ├── Approval Manager
+  ├── Sandbox
+  └── Trace 与日志
+  ↓
+Orchestrator
+  ├── Research Agent → MCP Gateway → 文件系统 / GitHub / 数据库 / 搜索
+  ├── Code Agent     → MCP Gateway → 文件系统 / GitHub / 数据库 / 搜索
+  └── Review Agent   → MCP Gateway → 文件系统 / GitHub / 数据库 / 搜索
+  ↓
+A2A Gateway → 外部 Agent
+  ↓
+最终结果</code></pre>
+    <p>
+      这套架构中，LLM 负责理解、推理和决策；Harness 负责控制执行过程；
+      LangGraph 或 Agents SDK 负责编排；MCP 负责连接工具；A2A 负责跨 Agent 协作；
+      Memory 和 Context Manager 负责维护信息；Sandbox 和 Approval 负责安全；
+      Trace 和 Evals 负责质量控制。
+    </p>
+
+    <h2>五、多 Agent 是否一定比单 Agent 更好？</h2>
+    <p>答案是否定的。多 Agent 会引入额外成本：</p>
+    <ul>
+      <li>Token 消耗增加；</li>
+      <li>通信延迟增加；</li>
+      <li>状态同步更加复杂；</li>
+      <li>错误来源增多；</li>
+      <li>调试难度提升；</li>
+      <li>多个 Agent 可能重复工作。</li>
+    </ul>
+    <p>
+      只有当任务可以有效并行，或者不同子任务需要明显不同的专业能力时，多 Agent 才更有价值。
+      对于流程明确、步骤较少的任务，一个带工具和状态机的单 Agent 往往更加稳定。
+    </p>
+
+    <h2>六、如何选择 Agent 技术栈？</h2>
+    <h3>快速原型</h3>
+    <pre class="flow-code"><code>Python
++ OpenAI Agents SDK
++ Function Calling
++ SQLite</code></pre>
+    <p>适合快速实现工具调用、Handoff、Guardrail 和 Trace。</p>
+
+    <h3>复杂工作流</h3>
+    <pre class="flow-code"><code>Python
++ LangGraph
++ FastAPI
++ PostgreSQL
++ Redis</code></pre>
+    <p>适合需要状态图、条件路由、持久化、人工审批和失败恢复的系统。</p>
+
+    <h3>企业工具接入</h3>
+    <pre class="flow-code"><code>Agent Framework
++ MCP Client
++ 自定义 MCP Servers
++ OAuth / RBAC</code></pre>
+    <p>适合连接 GitHub、数据库、内部文档和业务系统。</p>
+
+    <h3>多 Agent 系统</h3>
+    <pre class="flow-code"><code>Orchestrator
++ Specialist Agents
++ MCP
++ A2A
++ Shared Memory
++ Evaluator</code></pre>
+    <p>适合跨团队、跨系统和大规模复杂任务。</p>
+
+    <h2>七、推荐学习路线</h2>
+    <ol>
+      <li><strong>掌握基本 Agent Loop：</strong>Function Calling、Tool Schema、ReAct、Structured Output、Pydantic 和错误重试。</li>
+      <li><strong>学习状态化编排：</strong>LangGraph State、Node、Edge、Conditional Edge、Checkpoint、Human-in-the-loop 和 Streaming。</li>
+      <li><strong>加入 Memory 和 RAG：</strong>短期状态、长期记忆、向量检索、混合检索、记忆冲突和 Context Compaction。</li>
+      <li><strong>掌握 MCP 和 Skills：</strong>MCP Client、MCP Server、Tool、Resource、Prompt、Skills 封装和权限控制。</li>
+      <li><strong>构建生产级 Harness：</strong>Docker Sandbox、最小权限、审批机制、Trace、超时重试、任务恢复、Agent Evals 和成本监控。</li>
+    </ol>
+
+    <h2>八、总结</h2>
+    <p>2026 年 Agent 技术的核心变化，可以概括为一句话：</p>
+    <blockquote>
+      <p>Agent 正在从“会调用工具的大语言模型”，演进为“具备状态、记忆、技能、执行环境、协作协议和评测闭环的软件系统”。</p>
+    </blockquote>
+    <p>未来真正决定 Agent 能否落地的，不只是模型参数和推理能力，而是整套 Agent Engineering 能力：</p>
+    <pre class="flow-code"><code>Model
++ Harness
++ Context
++ Memory
++ Skills
++ MCP
++ A2A
++ Sandbox
++ Evals</code></pre>
+    <p>对于开发者而言，最值得掌握的是以下五项底层能力：</p>
+    <ol>
+      <li>使用状态机控制 Agent 的执行过程；</li>
+      <li>使用 Harness 管理长任务和失败恢复；</li>
+      <li>使用 MCP 标准化工具接入；</li>
+      <li>使用 Memory 和 Context Engineering 管理信息；</li>
+      <li>使用 Trace、Verifier 和 Evals 持续提升系统可靠性。</li>
+    </ol>
+    <p>
+      Agent 的下一个阶段，不是让模型“看起来更聪明”，而是让整个系统真正做到：
+      <strong>能执行、能恢复、能验证、能协作，也能被安全地控制。</strong>
+    </p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://platform.openai.com/docs/guides/agents" target="_blank" rel="noreferrer">OpenAI：Agents guide</a></li>
+      <li><a href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank" rel="noreferrer">LangGraph documentation</a></li>
+      <li><a href="https://modelcontextprotocol.io/specification/latest" target="_blank" rel="noreferrer">Model Context Protocol specification</a></li>
+      <li><a href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" target="_blank" rel="noreferrer">Google Developers Blog：Agent2Agent Protocol</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/context-engineering/")}>Context Engineering →</a>
+    </div>
+  </article>
+</NotesLayout>
