@@ -4,22 +4,91 @@ import { sitePath } from "../../lib/site.js";
 ---
 
 <BaseLayout
-  title="关于我 | QingPing-s"
-  description="QingPing-s 的个人方向、项目与技术兴趣。"
+  title="关于 | QingPing-s"
+  description="关于 QingPing-s Tech Blog：AI Agent、RAG、长期记忆、评测和工程实践笔记。"
 >
-  <section class="article-page">
+  <section class="article-page prose">
     <header class="article-header">
       <p class="eyebrow">About</p>
-      <h1>关于我</h1>
+      <h1>关于</h1>
       <p>
-        QingPing-s，关注 AI Agent、RAG、长期记忆、多智能体协作与多智能体强化学习的工程实践和研究。
+        这里是 QingPing’s Tech Blog，用来记录技术学习、项目实践和工程踩坑。
+        主要关注 AI Agent、RAG、长期记忆、评测体系以及 LLM 应用工程。
       </p>
       <div class="inline-actions">
-        <a class="primary-link" href={sitePath("projects/")}>查看项目</a>
+        <a class="primary-link" href={sitePath("notes/")}>阅读笔记</a>
+        <a class="outline-link" href={sitePath("projects/")}>查看项目</a>
         <a class="outline-link" href="https://github.com/QingPing-s" target="_blank" rel="noreferrer">
           GitHub
         </a>
       </div>
     </header>
+
+    <h2>关于这个博客</h2>
+    <p>
+      这个博客不是简历堆叠页，也不是零散收藏夹。它更像一个长期整理区：
+      把学习 Agent 工程时遇到的概念、框架、论文思路、项目实现和排错经验沉淀下来，
+      方便之后复盘，也方便同样在探索 AI 工程的人参考。
+    </p>
+
+    <h2>目前关注的方向</h2>
+    <ul>
+      <li><strong>AI Agent：</strong>Agent Loop、ReAct、Workflow、Tool Use、Function Calling 与 Harness Engineering。</li>
+      <li><strong>RAG：</strong>文档处理、Embedding、向量数据库、混合检索、重排、评测与可解释性。</li>
+      <li><strong>Memory：</strong>短期状态、长期记忆、上下文压缩、记忆写入策略与跨任务复用。</li>
+      <li><strong>Agent Evaluation：</strong>任务成功率、工具调用准确性、轨迹评测、LLM-as-Judge 与 Rubric。</li>
+      <li><strong>工程部署：</strong>FastAPI、前端工作台、异步任务、Trace、测试、Docker 与云端部署。</li>
+    </ul>
+
+    <h2>项目实践</h2>
+    <p>
+      我会优先把概念落到可运行项目里，而不是停留在名词解释。当前项目主要围绕岗位匹配、
+      学习监督和 Text-to-SQL 等场景展开，重点关注系统是否可复盘、可评测、可降级和可部署。
+    </p>
+    <aside class="callout">
+      <strong>工程判断</strong>
+      <p>
+        对 Agent 项目来说，模型能力只是其中一部分。真正影响稳定性的，往往是状态管理、
+        工具边界、失败恢复、日志追踪、评测和权限控制。
+      </p>
+    </aside>
+
+    <h2>写作原则</h2>
+    <ul>
+      <li>尽量用工程语言解释概念，避免只堆术语。</li>
+      <li>优先记录自己验证过、实现过或踩过坑的内容。</li>
+      <li>保留必要的背景和边界条件，不把实验结论包装成绝对结论。</li>
+      <li>文章可以持续更新，先保证结构清晰，再逐步补充细节。</li>
+    </ul>
+
+    <h2>常用技术栈</h2>
+    <div class="chips">
+      <span>Python</span>
+      <span>FastAPI</span>
+      <span>LangGraph</span>
+      <span>RAG</span>
+      <span>ChromaDB</span>
+      <span>SQLite</span>
+      <span>React</span>
+      <span>Astro</span>
+      <span>Docker</span>
+      <span>GitHub Actions</span>
+    </div>
+
+    <h2>导航</h2>
+    <div class="list-panel">
+      <a href={sitePath("notes/")}>
+        <strong>技术笔记</strong>
+        <span>按 Agent、LangGraph、RAG、Memory、Evaluation 和编程基础整理。</span>
+      </a>
+      <a href={sitePath("projects/")}>
+        <strong>项目</strong>
+        <span>JobPilot-Agent、AgentCoach、DataPilot-SQLAgent 等实践项目。</span>
+      </a>
+      <a href="https://github.com/QingPing-s" target="_blank" rel="noreferrer">
+        <strong>GitHub</strong>
+        <span>查看源码、项目和持续更新记录。</span>
+      </a>
+    </div>
   </section>
 </BaseLayout>
