@@ -93,7 +93,6 @@ export const noteSections = [
     items: [
       ["Python", "coding/python/"],
       ["Java", "coding/java/"],
-      ["数据结构", "coding/data-structures/"],
       ["LeetCode", "coding/leetcode/"],
     ],
   },
