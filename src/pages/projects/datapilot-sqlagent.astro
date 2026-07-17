@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sitePath } from "../../lib/site.js";
+
+const structure = [
+  "用户自然语言问题进入分析工作台。",
+  "Schema Agent 发现数据库 schema、样例行和表关系。",
+  "SQL Planner 与 SQL Generator 生成候选 SQL，并通过 Pydantic 做结构约束。",
+  "SQL Executor 只允许只读 SELECT/WITH 查询，失败后进入有界自修复。",
+  "Answer Analyst 生成基于执行结果的回答，Judge Agent 评估回答质量并输出 Trace。"
+];
+
+const evidence = [
+  "LangGraph 条件路由和最多两次 SQL 修复，避免无限循环。",
+  "只读 SQL 安全边界，拒绝不安全语句。",
+  "Spider-style 离线评测，记录 SQL Valid Rate、Execution Accuracy、Exact Match 等指标。",
+  "LLM-as-Judge 评估问题-SQL 对齐、答案忠实度、解释质量和幻觉率。",
+  "Docker、Azure Container Apps 和 ACR 支持生产式部署。"
+];
+
+const tags = ["LangGraph", "Text-to-SQL", "FastAPI", "SQLite", "Pydantic", "React + Vite", "Docker"];
+---
+
+<BaseLayout title="DataPilot-SQLAgent | 项目" description="基于 LangGraph 的多智能体 Text-to-SQL 数据分析系统。">
+  <article class="article-page project-detail">
+    <div class="project-showcase">
+      <div class="project-media-stack">
+        <img src={sitePath("projects/datapilot-sqlagent/ui.png")} alt="DataPilot-SQLAgent 数据分析工作台界面" loading="lazy" />
+        <img src={sitePath("projects/datapilot-sqlagent/architecture.png")} alt="DataPilot-SQLAgent 系统架构图" loading="lazy" />
+      </div>
+
+      <section class="project-story">
+        <header class="article-header project-header">
+          <p class="eyebrow">Text-to-SQL / Multi-Agent</p>
+          <h1>DataPilot-SQLAgent</h1>
+          <p class="tagline">多智能体 Text-to-SQL 数据分析系统</p>
+          <p>
+            DataPilot 基于 LangGraph、DeepSeek API 和 SQLite，将自然语言问题转换为可执行 SQL，
+            在查询失败时自动修复，解释执行结果，评估回答质量，并记录完整 Agent 执行轨迹。
+          </p>
+          <div class="inline-actions">
+            <a class="primary-link" href="https://datapilot-sql-agent.gentlefield-019d4ae8.eastasia.azurecontainerapps.io/" target="_blank" rel="noreferrer">在线演示</a>
+            <a class="outline-link" href="https://github.com/QingPing-s/DataPilot-SQLAgent" target="_blank" rel="noreferrer">查看 GitHub</a>
+          </div>
+        </header>
+
+        <section class="project-columns">
+          <div>
+            <h2>系统结构</h2>
+            <ol>
+              {structure.map((item) => <li>{item}</li>)}
+            </ol>
+          </div>
+          <div>
+            <h2>工程证据</h2>
+            <ul>
+              {evidence.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </section>
+
+        <ul class="project-tags">
+          {tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+
+        <p class="project-summary">适合展示 Agent 如何在数据库工具调用、SQL 安全边界、失败修复、评测和 Trace 中形成可验证的数据分析流程。</p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

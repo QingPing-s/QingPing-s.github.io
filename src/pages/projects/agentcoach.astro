@@ -1,0 +1,69 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sitePath } from "../../lib/site.js";
+
+const structure = [
+  "Goal Planner 根据长期 Memory、掌握度和到期复习生成今日目标。",
+  "Quiz Agent 基于学习内容生成检测问题，Evaluator Agent 按 Rubric 评分。",
+  "Memory Curator 提取薄弱点、错因和复习建议，Mastery Service 更新掌握度。",
+  "个人知识库 RAG 提供 Markdown 笔记检索、来源引用问答和基于文档的 Quiz。",
+  "Learning Harness 记录完整流程，Trace 页面展示可审计执行路径。"
+];
+
+const evidence = [
+  "长期 Memory 类型、重要性、置信度、标签和下次复习时间建模。",
+  "Memory MCP-style Tools：search、write、update、list_due_reviews、delete。",
+  "Redis 用于缓存、Quiz 恢复、提醒状态和 LLM 限流，并支持故障回退。",
+  "RAG 与 Memory 分离，知识资料不直接写入长期记忆。",
+  "不执行 Shell、不自动写代码、不保存隐藏思维链，边界清晰。"
+];
+
+const tags = ["FastAPI", "React + Vite", "Memory", "RAG", "Redis", "Rubric", "Learning Harness"];
+---
+
+<BaseLayout title="AgentCoach | 项目" description="基于长期记忆、RAG 和多智能体协作的个人 AI Agent 学习监督与复盘系统。">
+  <article class="article-page project-detail">
+    <div class="project-showcase">
+      <div class="project-media-stack">
+        <img src={sitePath("projects/agentcoach/ui.png")} alt="AgentCoach 学习监督工作台界面" loading="lazy" />
+        <img src={sitePath("projects/agentcoach/architecture.png")} alt="AgentCoach 系统架构图" loading="lazy" />
+      </div>
+
+      <section class="project-story">
+        <header class="article-header project-header">
+          <p class="eyebrow">Memory / Learning Agent</p>
+          <h1>AgentCoach</h1>
+          <p class="tagline">长期记忆驱动的个人学习监督 Agent</p>
+          <p>
+            AgentCoach 是一个围绕每日目标、手动打卡、知识检测、Rubric 评分、长期 Memory、
+            掌握度、复盘、Redis、Learning Harness 和可审计 Trace 构建的学习闭环系统。
+          </p>
+          <div class="inline-actions">
+            <a class="outline-link" href="https://github.com/QingPing-s/AgentCoach" target="_blank" rel="noreferrer">查看 GitHub</a>
+          </div>
+        </header>
+
+        <section class="project-columns">
+          <div>
+            <h2>系统结构</h2>
+            <ol>
+              {structure.map((item) => <li>{item}</li>)}
+            </ol>
+          </div>
+          <div>
+            <h2>工程证据</h2>
+            <ul>
+              {evidence.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </section>
+
+        <ul class="project-tags">
+          {tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+
+        <p class="project-summary">适合展示长期记忆、学习状态建模、RAG 个人知识库和 Agent Harness 如何组合成可持续迭代的学习系统。</p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

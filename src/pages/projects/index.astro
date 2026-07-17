@@ -1,24 +1,169 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { sitePath } from "../../lib/site.js";
+
+const projects = [
+  {
+    id: "jobpilot",
+    label: "AI Agent / RAG",
+    title: "JobPilot-Agent",
+    href: "projects/jobpilot-agent/",
+    github: "https://github.com/QingPing-s/JobPilot-Agent",
+    image: "projects/jobpilot-agent/ui.png",
+    architecture: "projects/jobpilot-agent/architecture.png",
+    subtitle: "岗位匹配与简历优化 RAG-Agent 工作台",
+    description:
+      "面向 AI Agent、RAG 与 LLM 应用实习岗位的智能匹配和简历优化系统，使用 LangGraph 编排画像解析、JD 解析、混合召回、岗位重排、匹配评分、差距分析和简历建议。",
+    structure: [
+      "React 工作台接收候选人画像、目标岗位和岗位 JD。",
+      "FastAPI 创建异步任务，并通过 SSE 返回节点进度。",
+      "LangGraph 编排检索、重排、评分、差距分析和简历建议。",
+      "ChromaDB 向量召回与 TF-IDF 关键词召回通过 Weighted RRF 融合。",
+    ],
+    evidence: [
+      "固定 BGE Embedding、TF-IDF 和 Weighted RRF 混合检索。",
+      "确定性匹配评分、可选 LLM 重排和规则降级。",
+      "Trace、离线评测、pytest、Playwright 和 Azure 部署。",
+    ],
+    tags: ["LangGraph", "RAG", "FastAPI", "React + Vite", "ChromaDB", "Azure"],
+  },
+  {
+    id: "agentcoach",
+    label: "Memory / Learning Agent",
+    title: "AgentCoach",
+    href: "projects/agentcoach/",
+    github: "https://github.com/QingPing-s/AgentCoach",
+    image: "projects/agentcoach/ui.png",
+    architecture: "projects/agentcoach/architecture.png",
+    subtitle: "长期记忆驱动的个人学习监督 Agent",
+    description:
+      "基于长期记忆、Memory MCP-style Tools、个人知识库 RAG 和多智能体协作的学习监督与复盘系统，围绕每日目标、知识检测、Rubric 评分、长期 Memory、掌握度和 Trace 构建学习闭环。",
+    structure: [
+      "Goal Planner 根据长期 Memory 和掌握度生成今日目标。",
+      "Quiz Agent 生成检测问题，Evaluator Agent 按 Rubric 评分。",
+      "Memory Curator 提取薄弱点、错因和复习建议。",
+      "Learning Harness 记录完整流程，Trace 页面展示执行路径。",
+    ],
+    evidence: [
+      "长期 Memory 类型、重要性、置信度和复习时间建模。",
+      "Memory MCP-style Tools 固定注册，避免动态越权。",
+      "RAG 与 Memory 分离，问答强制展示来源引用。",
+    ],
+    tags: ["Memory", "RAG", "Rubric", "Redis", "MCP-style Tools", "Learning Harness"],
+  },
+  {
+    id: "datapilot",
+    label: "Text-to-SQL / Multi-Agent",
+    title: "DataPilot-SQLAgent",
+    href: "projects/datapilot-sqlagent/",
+    github: "https://github.com/QingPing-s/DataPilot-SQLAgent",
+    image: "projects/datapilot-sqlagent/ui.png",
+    architecture: "projects/datapilot-sqlagent/architecture.png",
+    subtitle: "多智能体 Text-to-SQL 数据分析系统",
+    description:
+      "基于 LangGraph、DeepSeek API 和 SQLite 的多智能体 Text-to-SQL 系统，将自然语言问题转换为可执行 SQL，在查询失败时自动修复，解释执行结果，评估回答质量并记录完整 Agent Trace。",
+    structure: [
+      "Schema Agent 发现数据库 schema、样例行和表关系。",
+      "SQL Planner 与 SQL Generator 生成候选 SQL。",
+      "SQL Executor 只允许只读 SELECT/WITH 查询。",
+      "Answer Analyst 和 Judge Agent 生成回答、评估质量并输出报告。",
+    ],
+    evidence: [
+      "LangGraph 条件路由和最多两次 SQL 修复。",
+      "只读 SQL 安全边界，拒绝不安全语句。",
+      "Spider-style 离线评测与 LLM-as-Judge 质量评估。",
+    ],
+    tags: ["LangGraph", "Text-to-SQL", "FastAPI", "SQLite", "Pydantic", "Docker"],
+  },
+];
 ---
 
 <BaseLayout
   title="项目 | QingPing-s"
-  description="QingPing-s 的 AI Agent、RAG 与全栈工程项目展示。"
+  description="QingPing-s 的 AI Agent、RAG、Memory 和 Text-to-SQL 工程项目展示。"
 >
-  <section class="article-page">
-    <header class="article-header">
-      <p class="eyebrow">Projects</p>
-      <h1>项目</h1>
-      <p>围绕 AI Agent、RAG、评测与部署整理可运行的工程项目。</p>
-    </header>
-    <div class="post-list">
-      <a class="post-card" href={sitePath("projects/jobpilot-agent/")}>
-        <span>AI Agent / RAG</span>
-        <h2>JobPilot RAG-Agent</h2>
-        <p>面向 AI Agent、RAG 与 LLM 应用实习岗位的智能匹配系统。</p>
-      </a>
+  <section class="article-page project-switch-page">
+    <div class="project-switcher" data-project-switcher>
+      <div class="project-selector" aria-label="项目选择">
+        {
+          projects.map((project, index) => (
+            <button
+              class="project-thumb"
+              type="button"
+              data-project-option={project.id}
+              aria-selected={index === 0 ? "true" : "false"}
+            >
+              <img src={sitePath(project.image)} alt={`${project.title} 项目截图`} loading="lazy" />
+              <span>{project.title}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="project-panel-stack">
+        {
+          projects.map((project, index) => (
+            <article class="project-panel" data-project-panel={project.id} hidden={index !== 0}>
+              <header class="project-panel-header">
+                <div>
+                  <h2>{project.title}</h2>
+                  <p class="tagline">{project.subtitle}</p>
+                </div>
+                <a class="outline-link" href={project.github} target="_blank" rel="noreferrer">查看 GitHub</a>
+              </header>
+
+              <p class="project-lead">{project.description}</p>
+
+              <section class="project-columns">
+                <div>
+                  <h3>系统结构</h3>
+                  <ol>
+                    {project.structure.map((item) => <li>{item}</li>)}
+                  </ol>
+                </div>
+                <div>
+                  <h3>工程证据</h3>
+                  <ul>
+                    {project.evidence.map((item) => <li>{item}</li>)}
+                  </ul>
+                </div>
+              </section>
+
+              <ul class="project-tags">
+                {project.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+
+              <div class="article-next compact-next">
+                <span>项目详情</span>
+                <a href={sitePath(project.href)}>查看完整项目页 →</a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
+
+  <script>
+    const switcher = document.querySelector("[data-project-switcher]");
+
+    if (switcher) {
+      const options = Array.from(switcher.querySelectorAll("[data-project-option]"));
+      const panels = Array.from(switcher.querySelectorAll("[data-project-panel]"));
+
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          const target = option.getAttribute("data-project-option");
+
+          options.forEach((item) => {
+            item.setAttribute("aria-selected", String(item === option));
+          });
+
+          panels.forEach((panel) => {
+            panel.hidden = panel.getAttribute("data-project-panel") !== target;
+          });
+        });
+      });
+    }
+  </script>
 </BaseLayout>
