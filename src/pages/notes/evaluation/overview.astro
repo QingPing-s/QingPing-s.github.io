@@ -1,0 +1,78 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="Agent Evaluation 总览 | 技术笔记"
+  description="从结果、轨迹、工具调用、RAG 和 LLM-as-Judge 五个层次搭建 Agent Evaluation 体系。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>Agent Evaluation 总览</h1>
+      <p>
+        Agent Evaluation 不是给最终回答打一个“好不好”的分数，而是把 Agent 从输入到完成任务的全过程拆开：
+        结果是否达成、路径是否合理、工具是否用对、证据是否可靠、评审标准是否稳定。
+      </p>
+      <div class="article-meta"><span>Eval System</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <h2>为什么 Agent 不能只看最终答案</h2>
+    <p>
+      普通 LLM 评测通常关注回答是否正确、流畅、相关。但 Agent 进入真实系统后，会调用工具、写文件、
+      查询数据库、触发流程、等待人工确认。最终答案正确，不代表过程可靠。
+    </p>
+    <ul>
+      <li>可能调用了错误工具，但碰巧拿到了可用结果。</li>
+      <li>可能绕过权限确认，执行了高风险动作。</li>
+      <li>可能检索到了错误证据，却生成了看似合理的回答。</li>
+      <li>可能完成任务，但用了过多步骤、Token 和时间。</li>
+      <li>可能这次成功，下次在相似输入下不稳定。</li>
+    </ul>
+
+    <h2>推荐的五层评测结构</h2>
+    <pre class="flow-code"><code>Agent Evaluation
+├── Result Eval      最终结果是否完成目标
+├── Trajectory Eval  执行路径是否合理可控
+├── Tool Eval        工具选择和参数是否正确
+├── RAG Eval         证据召回、排序和引用是否可靠
+└── Judge + Rubric   用稳定标准评审开放式输出</code></pre>
+
+    <h2>每层回答的问题</h2>
+    <ul>
+      <li><strong>结果评测：</strong>用户目标有没有真的完成，最终状态是否符合预期。</li>
+      <li><strong>轨迹评测：</strong>中间步骤是否合理，是否出现无效循环、错误分支或越权动作。</li>
+      <li><strong>工具调用评测：</strong>工具是否选对，参数是否完整，失败时是否正确重试或降级。</li>
+      <li><strong>RAG 评测：</strong>相关证据是否被召回，进入 Prompt 的上下文是否干净，回答是否忠实于证据。</li>
+      <li><strong>LLM-as-Judge 与 Rubric：</strong>开放任务如何稳定评分，如何减少评审偏差。</li>
+    </ul>
+
+    <h2>一个可执行的评测闭环</h2>
+    <ol>
+      <li>收集真实任务样本和 bad case。</li>
+      <li>为每个样本定义输入、期望结果、约束和风险边界。</li>
+      <li>运行 Agent 并保存完整 trace。</li>
+      <li>分别计算结果、轨迹、工具、检索和回答质量指标。</li>
+      <li>用 Rubric 对开放式输出做 LLM-as-Judge，并抽样人工校准。</li>
+      <li>把失败样本归因到检索、工具、规划、权限、输出或评审标准。</li>
+      <li>修改 Agent 后回归同一批样本，而不是只看一次 demo。</li>
+    </ol>
+
+    <h2>工程优先级</h2>
+    <p>
+      如果项目还处在原型阶段，先做 Result Eval 和少量人工检查；如果已经有工具调用和 RAG，
+      必须补 Tool Eval、RAG Eval 和 trace；如果要持续迭代模型、Prompt 或工作流，就需要稳定 Rubric 和回归评测集。
+    </p>
+
+    <aside class="callout">
+      <strong>核心判断</strong>
+      <p>Agent Evaluation 的价值不是证明系统“很强”，而是让你知道系统为什么失败、改哪里、改完是否真的变好。</p>
+    </aside>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/result-eval/")}>结果评测 Result Eval →</a>
+    </div>
+  </article>
+</NotesLayout>

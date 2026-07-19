@@ -1,0 +1,60 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="工具调用评测 Tool Eval | 技术笔记" description="评估 Agent 是否选对工具、填对参数并遵守工具调用边界。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>工具调用评测 Tool Eval</h1>
+      <p>
+        Tool Eval 评估 Agent 在工具调用阶段是否选对工具、填对参数、处理好错误，并遵守权限边界。
+        对 Agent 来说，工具层是能力入口，也是风险入口。
+      </p>
+      <div class="article-meta"><span>Tool Use</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>拆成四个层次</h2>
+    <ul>
+      <li><strong>工具选择：</strong>是否调用了该调用的工具，是否误用了无关工具。</li>
+      <li><strong>参数正确性：</strong>必填参数是否完整，实体、时间、ID、过滤条件是否正确。</li>
+      <li><strong>结果处理：</strong>工具失败、空结果、异常返回时是否能重试、降级或终止。</li>
+      <li><strong>调用边界：</strong>是否在需要确认时暂停，是否避免危险或越权操作。</li>
+    </ul>
+
+    <h2>常见指标</h2>
+    <ul>
+      <li><strong>Tool Selection Accuracy：</strong>工具名是否匹配参考答案。</li>
+      <li><strong>Argument Precision：</strong>传入参数中有多少是正确且必要的。</li>
+      <li><strong>Argument Recall：</strong>必要参数是否被完整填入。</li>
+      <li><strong>Tool Call F1：</strong>综合工具调用的 precision 和 recall。</li>
+      <li><strong>Unsafe Call Rate：</strong>危险工具被错误调用的比例。</li>
+    </ul>
+
+    <h2>为什么不能只看最终答案</h2>
+    <p>
+      Agent 有时能用错误工具绕路得到正确答案，但这在生产环境里会带来成本、延迟和安全问题。
+      工具调用评测能提前暴露这些隐患，尤其适合代码执行、数据库查询、文件写入和外部 API 调用场景。
+    </p>
+
+    <h2>评测样本怎么写</h2>
+    <pre class="flow-code"><code>user_task:
+available_tools:
+expected_tool_calls:
+forbidden_tool_calls:
+required_args:
+expected_behavior_on_error:</code></pre>
+
+    <h2>项目中的用法</h2>
+    <p>
+      在 DataPilot-SQLAgent 中，Tool Eval 可以检查：是否只生成 SELECT/WITH 查询、
+      是否拒绝危险 SQL、schema 工具是否先于 SQL 生成调用、执行失败后是否进入修复节点。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/rag-eval/")}>RAG 评测 →</a>
+    </div>
+  </article>
+</NotesLayout>

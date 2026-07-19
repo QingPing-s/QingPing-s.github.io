@@ -1,0 +1,64 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="结果评测 Result Eval | 技术笔记" description="评估 Agent 是否真正完成用户目标，而不是只生成看起来合理的回答。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>结果评测 Result Eval</h1>
+      <p>
+        Result Eval 评估 Agent 的最终输出或最终状态是否满足用户目标。
+        它是最接近业务价值的一层，但也最容易被写得过粗。
+      </p>
+      <div class="article-meta"><span>Outcome Metric</span><span>约 7 分钟阅读</span></div>
+    </header>
+
+    <h2>它评什么</h2>
+    <p>
+      Result Eval 不只是看“回答有没有道理”，而是看任务是否完成。例如代码是否修好、
+      文件是否生成、数据库查询是否正确、岗位匹配报告是否覆盖用户要求。
+    </p>
+    <ul>
+      <li><strong>目标完成：</strong>核心任务是否达成。</li>
+      <li><strong>约束遵守：</strong>格式、范围、权限、语言和时间限制是否被遵守。</li>
+      <li><strong>最终状态：</strong>系统外部状态是否符合预期，例如文件、接口返回、测试结果。</li>
+      <li><strong>用户价值：</strong>输出是否能直接用于下一步决策。</li>
+    </ul>
+
+    <h2>常见评分方式</h2>
+    <ul>
+      <li><strong>Pass / Fail：</strong>适合有明确验收条件的任务。</li>
+      <li><strong>等级评分：</strong>如 0-3 分，区分失败、部分成功、基本成功、完全成功。</li>
+      <li><strong>子目标评分：</strong>把复杂任务拆成多个 checklist，避免一个总分掩盖问题。</li>
+      <li><strong>端到端测试：</strong>让 Agent 在模拟或真实环境中执行，检查最终状态。</li>
+    </ul>
+
+    <h2>Result Eval 的盲点</h2>
+    <p>
+      结果正确不代表过程安全。Agent 可能绕了远路、调用了错误工具、泄露了信息、忽略了审批节点，
+      甚至偶然得到正确答案。因此 Result Eval 必须和 Trajectory Eval、Tool Eval 一起看。
+    </p>
+
+    <h2>项目中的用法</h2>
+    <p>
+      在 JobPilot-Agent 这类岗位匹配系统中，Result Eval 可以检查：候选画像是否抽取完整、
+      Top-K 岗位是否相关、匹配评分是否有解释、差距分析是否可执行、简历建议是否和目标岗位一致。
+    </p>
+
+    <h2>最低可用模板</h2>
+    <pre class="flow-code"><code>case_id:
+input:
+expected_outcome:
+hard_constraints:
+score:
+failure_reason:
+human_review_required:</code></pre>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/trajectory-eval/")}>轨迹评测 Trajectory Eval →</a>
+    </div>
+  </article>
+</NotesLayout>

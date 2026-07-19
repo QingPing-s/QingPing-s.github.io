@@ -1,0 +1,59 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout title="RAG 评测 | 技术笔记" description="从检索召回、排序质量、上下文干净度和回答忠实度评估 RAG 系统。">
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">Agent Evaluation</p>
+      <h1>RAG 评测</h1>
+      <p>
+        RAG 评测不能只看最终回答。一个 RAG 系统可能因为切分、召回、排序、上下文拼接或生成阶段失败。
+        评测时要把链路拆开。
+      </p>
+      <div class="article-meta"><span>RAG Eval</span><span>约 8 分钟阅读</span></div>
+    </header>
+
+    <h2>四个评测层次</h2>
+    <ul>
+      <li><strong>检索召回：</strong>正确证据有没有进入 Top-K。</li>
+      <li><strong>排序质量：</strong>正确证据是否排在足够靠前的位置。</li>
+      <li><strong>上下文质量：</strong>进入 Prompt 的内容是否干净、去重、相关。</li>
+      <li><strong>回答质量：</strong>答案是否基于证据，是否完整回答问题。</li>
+    </ul>
+
+    <h2>常用指标</h2>
+    <ul>
+      <li><strong>Recall@K：</strong>Top-K 是否覆盖相关文档。</li>
+      <li><strong>MRR：</strong>第一个相关文档出现得是否足够靠前。</li>
+      <li><strong>Context Precision：</strong>被送入 Prompt 的上下文有多少是有用的。</li>
+      <li><strong>Faithfulness：</strong>回答中的关键声明是否能被上下文支持。</li>
+      <li><strong>Answer Relevance：</strong>回答是否真正回应了用户问题。</li>
+    </ul>
+
+    <h2>典型失败归因</h2>
+    <pre class="flow-code"><code>回答失败
+├── 检索没找回       → chunk / embedding / query rewrite 问题
+├── 找回但排序靠后   → rerank / fusion / metadata 权重问题
+├── 上下文太噪       → Top-K 过大 / 去重差 / chunk 粒度问题
+└── 证据正确但答错   → prompt / generator / judge 问题</code></pre>
+
+    <h2>JobPilot 中的评测方式</h2>
+    <p>
+      岗位匹配类 RAG 不只看“岗位是否相似”。更重要的是目标岗位、技能要求、项目经历和差距建议是否对应。
+      可以把评测样本拆成：JD 输入、候选人画像、应召回岗位、应解释技能点、应指出差距。
+    </p>
+
+    <h2>和 RAG 笔记的关系</h2>
+    <p>
+      这里是评测视角；如果要看检索、Hybrid Retrieval、Weighted RRF、Rerank 的实现和取舍，
+      可以回到 RAG 目录里的检索与排序笔记。
+    </p>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/evaluation/llm-judge-rubric/")}>LLM-as-Judge 与 Rubric →</a>
+    </div>
+  </article>
+</NotesLayout>
