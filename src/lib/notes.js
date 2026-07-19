@@ -82,16 +82,6 @@ export const noteSections = [
     ],
   },
   {
-    id: "marl",
-    title: "多智能体研究",
-    items: [
-      ["MARL 基础", "marl/marl-basics/"],
-      ["MAT", "marl/mat/"],
-      ["SMAC", "marl/smac/"],
-      ["Attention Residual", "marl/attention-residual/"],
-    ],
-  },
-  {
     id: "coding",
     title: "编程基础",
     items: [
