@@ -5,7 +5,7 @@ import { sitePath } from "../../../lib/site.js";
 
 <NotesLayout
   title="AI 概念坐标系 | 技术笔记"
-  description="用五层坐标系理解 LLM、Prompt、RAG、Tools、Agent、多智能体和 AI 工作场景。"
+  description="用五层 AI 概念坐标系理解模型内核、交互入口、能力扩展、自主智能体和工作场景。"
 >
   <article class="article-page prose">
     <header class="article-header">
@@ -15,117 +15,144 @@ import { sitePath } from "../../../lib/site.js";
         这篇笔记用五层结构整理 AI 系统中的关键概念：从模型内核、交互入口、能力扩展，到自主 Agent
         和真实工作场景。它不是严格的学术分类，而是一个便于学习、工程拆解和后续扩展的理解框架。
       </p>
-      <div class="article-meta"><span>概念框架</span><span>约 12 分钟阅读</span></div>
+      <div class="article-meta"><span>概念框架</span><span>约 15 分钟阅读</span></div>
     </header>
 
-    <h2>为什么需要一个坐标系</h2>
+    <h2>知识点框架：五层 AI 概念坐标系</h2>
     <p>
-      AI 相关概念很容易混在一起：LLM 是模型，RAG 是外部知识接入方式，Tool 是环境操作能力，Agent
-      是目标驱动的闭环系统，Vibe Coding 则是工作方式的变化。把它们放进同一个坐标系后，可以更清楚地判断一个技术到底位于哪一层、解决什么问题、和其他模块如何连接。
+      五层 AI 概念坐标系（5-Layer AI Conceptual Coordinate System）可以把分散的 AI 名词放回系统结构中理解：
+      模型提供能力，入口传递意图，扩展层连接外部世界，Agent 层形成目标驱动闭环，工作场景层完成生产力落地。
     </p>
 
     <h2>第一层：模型内核层</h2>
-    <p>
-      模型内核层是整个 AI 系统的能力地基，决定了系统的泛化能力、语言理解能力、推理深度和计算颗粒度。
-    </p>
+    <p><strong>Model Kernel Layer —— 智能基座与推理引擎</strong></p>
+    <p>本层是整个 AI 体系的能力地基，决定了系统的泛化能力、逻辑深度与计算颗粒度。</p>
     <ul>
-      <li><strong>大语言模型 LLM：</strong>系统的基础预测与生成引擎，例如 GPT、Claude、Gemini、DeepSeek、Qwen 等。</li>
-      <li><strong>Token：</strong>模型处理文本和代码的基本单位，直接影响上下文占用、推理成本和响应延迟。</li>
-      <li><strong>上下文窗口：</strong>模型一次推理中可见的工作记忆空间，用来容纳问题、历史对话、文件片段和工具返回结果。</li>
-      <li><strong>多模态：</strong>让模型处理文本、图像、音频、视频、表格和截图等多种信息形态。</li>
-      <li><strong>推理模型：</strong>面向数学、代码、复杂逻辑和多步骤任务优化的模型类型，通常会结合高质量推理数据、强化学习、过程监督或推理时计算扩展。</li>
+      <li>
+        <strong>大语言模型 (LLM)：</strong>系统的“超级预测引擎”（如 GPT、Claude、Gemini、DeepSeek、Qwen 等），
+        通过海量数据预训练、指令微调与人类反馈对齐（RLHF 等），形成代码编写、逻辑分析、推理问答、文本生成等能力。
+      </li>
+      <li>
+        <strong>Token (词元)：</strong>模型处理与计算的基本单位。Token 数量直接影响序列长度、上下文窗口占用、
+        推理成本与系统开销。对于标准 Transformer，自注意力机制的计算复杂度通常随序列长度呈 O(N^2) 增长。
+      </li>
+      <li>
+        <strong>上下文窗口 (Context Window)：</strong>模型的“工作记忆空间”。决定了模型在单次推理中能同时捕捉、
+        关联和处理的上下文跨度，如长篇文献、多轮对话、完整代码库和工具返回结果。
+      </li>
+      <li>
+        <strong>多模态 (Multimodal，多信息形式处理)：</strong>跨越单一文本模态，使模型能够处理文本、图像、视频、
+        音频、表格、截图等多种信息形式，并实现不同模态之间的语义对齐与联合表征。
+      </li>
+      <li>
+        <strong>推理模型 (Reasoning Models，复杂逻辑与多步规划模型)：</strong>面向复杂逻辑、数学、代码和多步骤规划任务优化的模型类型。
+        其能力提升通常来自高质量推理数据、强化学习、过程监督、思维链 (CoT)、推理时计算扩展等方式；
+        部分研究也会通过优化注意力路径、残差连接或记忆机制来增强深层特征保留与推理稳定性。
+      </li>
     </ul>
 
-    <aside class="callout">
-      <strong>理解重点</strong>
-      <p>这一层回答的是“模型本身会什么”。模型能力越强，上层系统的天花板通常越高，但工程系统仍然需要外部知识、工具和执行闭环来落地。</p>
-    </aside>
-
     <h2>第二层：交互入口层</h2>
-    <p>交互入口层定义人类意图或外部系统指令如何传递给模型。</p>
+    <p><strong>Interaction Interface Layer —— 意图传递与调用协议</strong></p>
+    <p>本层定义了人类意图或外部系统指令如何传递给模型内核。</p>
     <ul>
-      <li><strong>GUI：</strong>网页端、App、桌面客户端等面向普通用户的可视化入口。</li>
-      <li><strong>CLI：</strong>面向开发者的命令行入口，适合文件操作、Git、Shell、脚本和自动化流程。</li>
-      <li><strong>API：</strong>系统之间通信的标准接口，让 AI 能力可以被嵌入产品、企业系统或算法工程。</li>
-      <li><strong>IDE 插件：</strong>把代码上下文暴露给模型，用于代码补全、解释、修复、多文件重构和测试生成。</li>
-      <li><strong>Prompt Engineering：</strong>把模糊意图转化为清晰的任务说明，明确目标、约束、输出格式和评价标准。</li>
+      <li><strong>GUI (图形用户界面)：</strong>面向终端用户的可视化载体，如网页端、App、桌面客户端等，降低对话、协作与内容生成的交互门槛。</li>
+      <li><strong>CLI (命令行界面)：</strong>面向开发者的命令行交互方式，适合文件系统操作、Git 操作、Shell 命令执行、脚本化任务调度和自动化开发流程。</li>
+      <li><strong>API (应用程序接口)：</strong>标准化、解耦的系统级通信通道，允许模型能力被模块化地嵌入到独立产品、企业系统或复杂算法工程中。</li>
+      <li><strong>IDE 插件 (集成开发环境扩展)：</strong>将代码级上下文直接暴露给模型，使 AI 能够在开发环境中进行伴随式协作，实现代码补全、代码解释、Bug 修复、多文件重构和测试生成等能力。</li>
+      <li>
+        <strong>提示词工程 (Prompt Engineering，结构化指令设计)：</strong>将非结构化的人类意图，
+        转化为清晰、可执行、可约束、可检查的<strong>结构化任务说明</strong>，
+        核心是明确目标、限定约束、指定输出格式和设置评价标准。
+      </li>
     </ul>
 
     <h2>第三层：能力扩展层</h2>
-    <p>
-      单纯的模型受限于静态权重和上下文窗口。能力扩展层通过外部组件，让系统获得实时知识、私有数据和环境操作能力。
-    </p>
+    <p><strong>Capability Expansion Layer —— 边界突破与环境解耦</strong></p>
+    <p>单纯的模型内核受限于静态权重和上下文窗口，本层通过外挂组件赋予系统动态感知、知识检索与环境操作能力。</p>
     <ul>
-      <li><strong>RAG：</strong>通过向量检索、关键词检索、混合检索或图搜索接入外部资料，为回答提供证据并降低幻觉风险。</li>
-      <li><strong>Tools：</strong>模型可调用的外部函数或系统能力，例如 Web 搜索、文件 I/O、数据库查询、浏览器控制和代码执行。</li>
-      <li><strong>MCP：</strong>模型上下文协议，为工具和数据源接入提供更标准化的连接方式，但并不是唯一的工具接入方案。</li>
-      <li><strong>Skills：</strong>工程实践中对任务 SOP 的封装，描述某类任务应该如何分步骤完成。</li>
-      <li><strong>Harness：</strong>运行外壳或脚手架，负责组装模型、工具、上下文、权限、安全边界、日志、评测和执行流程。</li>
+      <li>
+        <strong>RAG (检索增强生成)：</strong>通过向量检索、关键词检索或图搜索接入外部知识库，
+        将实时数据、私有数据或领域知识注入上下文，作为 Grounding 机制提供外部证据、降低模型幻觉风险，并增强回答的可追溯性。
+      </li>
+      <li><strong>Tools (工具集)：</strong>供模型调用的外部函数或系统能力，如 Web 搜索、文件 I/O、代码解释器、Shell 命令、数据库查询、浏览器控制、邮件与日历操作等。</li>
+      <li><strong>MCP (模型上下文协议)：</strong>为异构数据源和外部工具接入提供标准化通信协议，降低不同工具、数据源和 AI 应用之间的集成成本。</li>
+      <li>
+        <strong>Skills (技能定义)：</strong>对特定任务的 SOP（标准作业程序）进行封装，
+        定义任务流程、工具调用时序、输入输出规范与约束条件。Tool 解决“能不能做”，Skill 解决“怎么做好”。
+      </li>
+      <li>
+        <strong>Harness (运行外壳/脚手架)：</strong>系统的环境封装与调度中枢。
+        负责组装模型、工具、Skills、上下文、权限、安全边界、日志和执行流程；
+        在研究或工程环境中，也可以集成 W&B、MLflow、LangSmith 等监控、评测或实验追踪工具。
+      </li>
     </ul>
 
     <h2>第四层：自主智能体层</h2>
-    <p>
-      自主智能体层把 AI 从“被动回答问题”推进到“围绕目标主动执行任务”。核心变化是系统开始具备规划、执行、观察反馈和迭代修正的闭环。
-    </p>
+    <p><strong>Autonomous Agent Layer —— 目标驱动的闭环系统</strong></p>
+    <p>本层实现了从“被动函数调用”到“主动执行系统”的范式跃迁。</p>
     <ul>
-      <li><strong>Single-Agent：</strong>通常由 LLM、状态、记忆、工具、规划和执行循环组成，适合代码修改、资料整理、自动化分析等任务。</li>
-      <li><strong>LLM 多智能体协作：</strong>多个 Agent 通过角色分工和消息传递协同工作，例如 Planner、Coder、Reviewer、Researcher。</li>
-      <li><strong>MARL：</strong>强化学习中的多智能体系统，多个智能体在共享环境中通过状态、动作、奖励和策略优化进行协作或竞争。</li>
-      <li><strong>MAT：</strong>Multi-Agent Transformer 属于 MARL 中的 Transformer-based policy architecture，用于建模多智能体之间的联合状态、动作依赖和协同决策。</li>
+      <li>
+        <strong>单体 Agent (Single-Agent)：</strong>由“LLM + 记忆/状态 + 工具 + 规划 + 执行循环”构成。
+        系统接收高层目标后，通过感知环境状态、拆解子任务、调用工具、观察反馈和修正计划，形成自主执行闭环。
+        典型例子包括 Claude Code、Cursor Agent、Windsurf，以及 OpenClaw、Hermes 等开源 Agent 框架；
+        其中开源项目的功能、星标与活跃度变化较快，应以实时官方仓库为准。
+      </li>
+      <li>
+        <strong>多智能体协同 (Multi-Agent Systems)：</strong>
+        <ul>
+          <li><strong>LLM 多智能体协作：</strong>多个 LLM Agent 通过角色分工、消息传递和工具调用协同完成任务，例如 Planner、Coder、Reviewer、Researcher 等角色协作。</li>
+          <li><strong>强化学习多智能体系统 (MARL)：</strong>多个智能体在共享环境中通过状态观测、动作选择、奖励反馈和策略优化进行协作或竞争。</li>
+          <li>
+            <strong>架构延伸：</strong>Multi-Agent Transformer (MAT) 属于 MARL 方向的 Transformer-based policy architecture，
+            主要用于建模多智能体之间的联合状态、动作依赖和协同决策。它与 Claude Code、Cursor Agent 这类 LLM Agent 不是同一类系统，
+            但都可以放在更广义的“多智能体系统”框架下理解。
+          </li>
+        </ul>
+      </li>
     </ul>
-
-    <aside class="callout">
-      <strong>边界提醒</strong>
-      <p>Claude Code、Cursor Agent 这类 LLM Agent 与 MARL 中的多智能体强化学习不是同一类系统，但都可以放在更广义的“多智能体系统”框架下理解。</p>
-    </aside>
 
     <h2>第五层：工作场景层</h2>
-    <p>
-      工作场景层是 AI 能力真正转化为生产力的地方。技术最终会嵌入研发环境、业务系统、办公流程和数据分析工作台。
-    </p>
+    <p><strong>Working Scenario Layer —— 生产力重塑与落地</strong></p>
+    <p>技术的最终投影面，AI 深度嵌入真实业务流、研发环境与系统架构，完成从技术能力到生产力的转化。</p>
     <ul>
-      <li><strong>研发与计算环境：</strong>IDE、代码仓库、终端、CI/CD、数据分析平台、云端开发环境和自动化实验流程。</li>
-      <li><strong>业务与办公系统：</strong>企业文档、知识中台、客服系统、CRM、ERP、OA、邮箱、日历和审批流。</li>
-      <li><strong>Vibe Coding：</strong>意图驱动开发方式。人类更多负责架构设计、边界定义、质量验收和高阶纠偏，AI 负责代码生成、局部实现、调试分析和迭代修改。</li>
+      <li>
+        <strong>研发与计算环境：</strong>AI 深度集成至 IDE（VS Code、Cursor）、代码仓库、终端、CI/CD 流水线、
+        数据分析工作台和云端开发环境中；在更专业的研究场景中，也可进入高性能计算任务编排、CUDA / MPI 任务调度和自动化实验流程。
+      </li>
+      <li><strong>业务与办公系统：</strong>沉淀于企业文档系统、知识中台、客服系统、CRM、ERP、OA、邮箱、日历和自动化审批流中，实现业务流程的智能化改造。</li>
+      <li>
+        <strong>Vibe Coding (意图驱动开发)：</strong>一种人机协同的新型工程范式。
+        人类将大量具体代码实现、初步调试与测试生成交给 AI，转而更多聚焦于系统架构设计、边界条件定义、审美判断、质量验收与高阶逻辑纠偏；
+        AI 负责代码生成、局部实现、重构、测试生成、报错分析和迭代修改。其本质不是“人完全不写代码”，
+        而是人类从逐行编码者转向系统设计者、任务监督者和质量裁判，AI 从代码补全工具转向可执行的工程协作者。
+      </li>
     </ul>
 
-    <h2>关键术语表</h2>
-    <dl>
-      <dt>Transformer</dt>
-      <dd>当前主流大语言模型的核心架构，依靠注意力机制建模 Token 之间的关系。</dd>
-
-      <dt>Attention</dt>
-      <dd>模型在处理某个 Token 时，根据相关性动态关注其他 Token，用于建模上下文关系和长距离依赖。</dd>
-
-      <dt>MoE</dt>
-      <dd>Mixture of Experts，通过多个专家网络扩大总容量，推理时只激活部分专家以控制计算成本。</dd>
-
-      <dt>SFT 与 RLHF</dt>
-      <dd>SFT 使用高质量问答数据做监督微调；RLHF 通过人类偏好和奖励模型进一步优化输出风格与安全性。</dd>
-
-      <dt>LoRA</dt>
-      <dd>低秩适配方法，冻结原模型大部分参数，只训练少量适配参数，降低微调成本。</dd>
-
-      <dt>蒸馏、量化、剪枝</dt>
-      <dd>常见模型压缩方法，分别通过小模型学习大模型、降低数值精度、删除低贡献结构来优化部署成本。</dd>
-
-      <dt>CoT</dt>
-      <dd>Chain of Thought，通过中间推理步骤提升复杂逻辑、数学和多步任务表现。</dd>
-
-      <dt>幻觉与越狱</dt>
-      <dd>幻觉是模型生成无依据或错误内容；越狱是诱导模型绕过安全规则的攻击方式。</dd>
-
-      <dt>Context 与 Memory</dt>
-      <dd>Context 是模型当前可见的信息；Memory 是系统长期保存、未来可取回再放入上下文的信息。</dd>
-
-      <dt>Workflow 与 Agent</dt>
-      <dd>Workflow 偏固定流程编排，Agent 偏动态规划、工具调用和反馈修正。</dd>
-    </dl>
-
-    <h2>小结</h2>
-    <p>
-      如果用一句话概括：模型内核提供能力，交互入口传递意图，能力扩展连接外部世界，Agent 层形成执行闭环，工作场景层完成生产力落地。后续学习 AI Agent、RAG、Memory、Evaluation 和 MARL 时，都可以先判断它们处在哪一层，再分析它们和其他层的接口关系。
-    </p>
+    <h2>专业名词</h2>
+    <ul>
+      <li><strong>MoE（Mixture of Experts，专家混合模型）：</strong>在模型内部设置多个专家网络，推理时由路由器选择部分专家参与计算，从而扩大模型总容量，同时减少每次实际激活的参数量。</li>
+      <li><strong>Transformer：</strong>当前绝大多数主流大语言模型的核心架构，依靠自注意力机制建模序列中不同 Token 之间的关系。</li>
+      <li><strong>Attention（注意力机制）：</strong>模型在处理某个 Token 时，根据相关性动态关注其他 Token，用于建模上下文关系和长距离依赖。</li>
+      <li><strong>预训练与微调：</strong>预训练是在大规模通用数据上学习语言、知识和模式；微调是在预训练模型基础上，用特定任务或领域数据继续训练，使模型更适合具体场景。</li>
+      <li><strong>SFT（监督微调）：</strong>微调的一种方式，使用人工标注或高质量构造的标准问答数据训练模型，使模型学会按照指令输出。</li>
+      <li><strong>RLHF（基于人类反馈的强化学习）：</strong>通过收集人类偏好数据、训练奖励模型，并用强化学习优化模型输出，使其更符合人类偏好和安全要求。</li>
+      <li><strong>LoRA（低秩适配）：</strong>一种参数高效微调方法，通过冻结原模型大部分参数，只训练少量低秩矩阵来适配新任务，从而降低训练成本和显存占用。</li>
+      <li><strong>蒸馏、量化、剪枝：</strong>模型压缩与优化技术。蒸馏是让小模型学习大模型能力；量化是将模型权重或激活值从高精度转换为低精度；剪枝是删除或稀疏化贡献较小的参数、连接、通道或神经元。</li>
+      <li><strong>CoT（Chain of Thought，思维链）：</strong>一种提示或训练方法，引导模型生成中间推理步骤，以提升复杂逻辑、数学和多步任务表现。</li>
+      <li><strong>幻觉与越狱：</strong>幻觉指 AI 自信地生成错误、虚构或无依据的信息；越狱指通过特殊提示诱导模型绕过安全规则，输出不当内容。</li>
+      <li><strong>Prompt（提示词）：</strong>提供给模型的输入指令，可以包括问题、背景、规则、示例、格式要求和约束条件。</li>
+      <li><strong>Token（词元）：</strong>模型处理文本的基本单位，可能是一个字、一个词、一个词的一部分、标点符号或代码片段，由 tokenizer 决定。</li>
+      <li><strong>Context（上下文）：</strong>模型当前一次推理中可见的信息，包括系统指令、用户输入、历史对话、上传文件、工具返回结果等。</li>
+      <li><strong>Memory（记忆）：</strong>AI 系统长期保存并可在未来复用的信息，例如用户偏好、项目背景、常用格式等。Memory 可以被取出放入 Context，但不等同于 Context。</li>
+      <li><strong>RAG（检索增强生成）：</strong>模型回答前先检索外部资料，再基于资料生成答案，用于接入实时/私有知识、降低幻觉风险并增强可追溯性。</li>
+      <li><strong>插件：</strong>为 AI 应用扩展外部服务能力的功能模块，例如订酒店、查航班、查数据库等，是工具接入的一种产品形态。</li>
+      <li><strong>API（应用程序接口）：</strong>程序之间通信的接口。外部应用可以通过 API 调用 AI，AI 也可以通过 API 调用外部服务。</li>
+      <li><strong>Agent（智能体）：</strong>能理解目标、制定计划、调用工具、观察反馈并循环修正的 AI 系统，不只是聊天，还能执行任务。</li>
+      <li><strong>Sub-agent（子智能体）：</strong>由主 Agent 调度的子任务执行单元，通常承担搜索、编码、测试、审查、总结等特定角色。</li>
+      <li><strong>工作流（Workflow）：</strong>将任务拆分为固定步骤，每个步骤由 AI、工具或人执行，类似自动化流水线。工作流偏固定流程，Agent 偏动态规划。</li>
+      <li><strong>Skill（技能）：</strong>封装特定任务所需的操作流程、指令、模板、脚本、资源文件或知识，供 Agent 在相关任务中调用。</li>
+      <li><strong>AI 原生（AI-native）：</strong>产品、系统或组织的核心流程、交互方式和价值创造逻辑围绕 AI 能力重新设计，而不是在传统产品上简单叠加 AI 功能。</li>
+    </ul>
 
     <div class="article-next">
       <span>继续阅读</span>
