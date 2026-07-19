@@ -2,6 +2,7 @@ import { sitePath } from "./site.js";
 
 export const standaloneNotes = [
   ["2026 Agent 技术全景", "agent/agent-landscape-2026/"],
+  ["闭源大模型信任危机", "agent/closed-model-trust-crisis/"],
   ["AI 概念坐标系", "agent/ai-concept-coordinate-system/"],
   ["Agent 是什么", "agent/what-is-agent/"],
 ];

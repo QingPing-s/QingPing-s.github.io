@@ -1,0 +1,266 @@
+---
+import NotesLayout from "../../../layouts/NotesLayout.astro";
+import { sitePath } from "../../../lib/site.js";
+---
+
+<NotesLayout
+  title="企业为什么开始逃离闭源大模型？| 技术笔记"
+  description="从数据边界、平台中立性、Agent 总成本和供应商锁定出发，分析 Anthropic 信任争议背后的企业 AI 架构变化。"
+>
+  <article class="article-page prose">
+    <header class="article-header">
+      <p class="eyebrow">企业 AI 架构</p>
+      <h1>企业为什么开始逃离闭源大模型？Anthropic 信任危机背后的技术逻辑</h1>
+      <p>
+        “逃离”并不意味着企业会停止使用 Claude 或 GPT，而是越来越多团队不再接受把数据、
+        成本和核心工作流全部绑定在一家模型厂商上。真正发生的变化，是企业 AI 从单模型调用
+        转向多模型路由、数据分级、私有部署和可退出架构。
+      </p>
+      <div class="article-meta"><span>AI Architecture</span><span>约 18 分钟阅读</span></div>
+    </header>
+
+    <blockquote>
+      <p>
+        本文讨论的是企业架构风险，不是对任何模型厂商“窃取客户数据”的事实认定。
+        目前没有公开证据证明 Anthropic 或 OpenAI 系统性地使用商业客户 API 数据训练模型。
+      </p>
+    </blockquote>
+
+    <h2>一、争议的起点：Token、数据与“Alpha”</h2>
+    <p>
+      2026 年 7 月，Palantir CEO Alex Karp 在 CNBC 采访中批评 OpenAI、Anthropic
+      的 Token 商业模式。他认为企业持续支付推理费用，却没有获得与成本匹配的业务价值，
+      同时还担心数据、业务流程和竞争优势逐渐进入外部平台的控制范围。
+    </p>
+    <p>
+      这是一项带有明显商业立场的指控。Palantir 与 NVIDIA 正在推广以开放权重模型、
+      私有基础设施和数据主权为核心的替代方案，因此 Karp 既是批评者，也是竞争方案的销售者。
+      但抛开情绪化表达，他提出的问题确实成立：
+    </p>
+    <ul>
+      <li>企业是否能解释每一次模型调用产生了什么价值？</li>
+      <li>核心数据经过哪些服务、缓存、日志和第三方基础设施？</li>
+      <li>模型价格、版本、限流和产品方向改变时，业务能否快速迁移？</li>
+      <li>底层模型供应商进入应用层后，是否仍然保持平台中立？</li>
+    </ul>
+
+    <h2>二、先把事实说清楚：信任问题不等于数据被盗</h2>
+    <p>
+      Anthropic 的商业产品政策写明：默认不使用 Anthropic API、Claude for Work
+      等商业产品中的聊天或代码会话训练模型，除非客户主动选择加入相关计划或明确提交反馈。
+      OpenAI 对企业和 API 数据也采用默认不训练的政策。
+    </p>
+    <p>
+      因此，把当前争议直接描述成“闭源厂商已经窃取企业数据”并不准确。
+      企业真正担心的是更广泛的<strong>控制权问题</strong>：
+    </p>
+    <table>
+      <thead>
+        <tr><th>控制维度</th><th>使用闭源 API 时的依赖</th><th>可能产生的风险</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>模型</td><td>权重、训练数据和推理实现不可见</td><td>行为变化难以解释</td></tr>
+        <tr><td>版本</td><td>模型升级和下线由供应商决定</td><td>回归测试与迁移压力</td></tr>
+        <tr><td>成本</td><td>按 Token、工具或服务层持续计费</td><td>规模增长后预算失控</td></tr>
+        <tr><td>数据</td><td>请求离开企业自身信任边界</td><td>留存、日志和跨境合规复杂化</td></tr>
+        <tr><td>产品</td><td>供应商可继续进入应用层</td><td>合作伙伴变成直接竞争者</td></tr>
+      </tbody>
+    </table>
+    <p>
+      合同可以约束数据如何使用，却无法消除价格变化、产品竞争、服务中断和战略转向。
+      所以企业信任不能只建立在隐私承诺上，还必须建立在可验证的技术边界和退出能力上。
+    </p>
+
+    <h2>三、平台为什么会从供应商变成竞争者</h2>
+    <p>
+      基础模型公司天然掌握模型、分发渠道、开发者生态和大量通用产品能力。
+      当某个应用市场被验证后，向上进入应用层通常具有商业吸引力。
+    </p>
+    <p>
+      Claude Code 就是一个清晰案例：Anthropic 不再只向 AI 编程产品供应模型，
+      而是直接提供能够读取代码库、修改文件、运行测试和提交代码的编程 Agent。
+      这不能证明 Anthropic 不当使用客户数据，但说明底层供应商与上层应用之间不存在永久边界。
+    </p>
+    <p>
+      Cursor 后续与 SpaceX 合作使用 Colossus 基础设施扩展自研模型训练，也体现了应用公司正在补齐自己的模型和算力能力。
+      更准确的趋势不是“所有应用公司都要自己训练基础模型”，而是它们不愿永远只有一个上游选择。
+    </p>
+
+    <h2>四、Agent 让 Token 成本从线性问题变成系统问题</h2>
+    <p>
+      普通聊天应用通常是一次输入、一次输出；Agent 则可能执行规划、检索、工具调用、
+      子任务委派、失败重试、Reflection 和 LLM-as-Judge。用户只点击一次，后台可能发生多轮模型调用。
+    </p>
+    <pre class="flow-code"><code>Agent 总成本
+= 输入 Token
++ 输出 Token
++ 多轮规划
++ 工具调用
++ 检索与存储
++ 失败重试
++ 评测模型
++ 人工复核
++ 推理基础设施</code></pre>
+    <p>
+      因此，只比较“每百万 Token 价格”意义有限。企业更应该使用：
+    </p>
+    <pre class="flow-code"><code>Cost per Successful Task
+=（模型费用 + 基础设施 + 人工修正 + 失败重跑）
+  ÷ 成功完成的任务数</code></pre>
+    <p>
+      一个便宜但需要反复重试的模型，最终可能比昂贵但一次成功的模型成本更高；
+      一个能力很强的闭源模型，也可能因为被用于大量简单分类和抽取任务而造成浪费。
+      成本治理的关键不是寻找全局最便宜的模型，而是让不同任务使用合适的模型。
+    </p>
+
+    <h2>五、开放权重与私有部署何时更划算</h2>
+    <p>
+      开放权重模型在高频、稳定、可批处理和数据敏感的任务中越来越有吸引力，
+      但“本地部署一定便宜”同样是错误结论。
+    </p>
+    <table>
+      <thead>
+        <tr><th>维度</th><th>闭源 API</th><th>开放权重与私有部署</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>启动成本</td><td>低，按使用量付费</td><td>需要 GPU、推理平台和工程团队</td></tr>
+        <tr><td>边际成本</td><td>每次调用持续计费</td><td>高利用率时可能更低</td></tr>
+        <tr><td>模型能力</td><td>前沿能力更新快</td><td>需自行评测、量化和优化</td></tr>
+        <tr><td>数据控制</td><td>依赖合同与服务配置</td><td>可保留在 VPC 或本地网络</td></tr>
+        <tr><td>可定制性</td><td>主要通过 Prompt、RAG 和工具扩展</td><td>可微调、蒸馏和修改推理栈</td></tr>
+        <tr><td>运维负担</td><td>低</td><td>容量规划、升级、监控和安全均需自理</td></tr>
+      </tbody>
+    </table>
+    <p>私有部署的完整 TCO 至少包括：</p>
+    <pre class="flow-code"><code>Private Model TCO
+= GPU 折旧或租赁
++ 电力与网络
++ 推理平台
++ 模型优化
++ 容量冗余
++ 监控与安全
++ 工程人员
++ 模型升级与评测</code></pre>
+    <p>
+      只有当请求量足够大、GPU 利用率足够高、任务相对稳定，并且数据控制具有明确业务价值时，
+      私有部署才更可能取得成本优势。它减少了数据暴露范围，但不会自动消除权限错误、
+      Prompt Injection、日志泄露和供应链攻击。
+    </p>
+
+    <h2>六、“主权 AI”为什么重新受到重视</h2>
+    <p>
+      NVIDIA 与 Palantir 推出的 Sovereign AI 方案，把开放的 Nemotron 模型部署到隔离环境，
+      让机构在自己的基础设施上训练、定制并保留模型权重。其核心并不是某一个模型，而是控制面的归属：
+    </p>
+    <pre class="flow-code"><code>主权 AI
+= 自主算力
++ 可控模型
++ 私有数据
++ 隔离部署
++ 权限治理
++ 完整审计</code></pre>
+    <p>
+      这种方案特别适合政府、关键基础设施、金融、医疗和强监管行业。
+      但 NVIDIA 同时也是前沿模型公司的算力供应商，因此这不是简单的“开源对闭源”，
+      而是不同部署模式共同扩大算力与基础设施市场。
+    </p>
+
+    <h2>七、企业的正确答案：Model Router，而不是二选一</h2>
+    <p>
+      企业不需要让开放模型在所有任务上击败 Claude。只要它在高频、低风险任务上达到可接受质量，
+      就能减少大量前沿模型调用。更稳健的架构是通过 AI Gateway 和 Model Router 统一调度：
+    </p>
+    <pre class="flow-code"><code>业务请求
+   ↓
+AI Gateway
+   ├── 身份认证与配额
+   ├── 敏感信息检测
+   ├── Prompt / Response 审计
+   ├── 成本与 Trace
+   └── Model Router
+          ├── 高难推理 → 闭源前沿模型
+          ├── 高频任务 → 开放权重模型
+          ├── 敏感任务 → 私有部署模型
+          ├── 低价值任务 → 小模型或低成本 API
+          └── 确定性任务 → 传统程序与规则</code></pre>
+    <p>路由策略至少需要考虑：</p>
+    <ul>
+      <li>任务难度与历史成功率；</li>
+      <li>数据敏感等级和允许的部署区域；</li>
+      <li>延迟、可用性和上下文长度；</li>
+      <li>单任务预算与剩余调用次数；</li>
+      <li>模型版本、评测结果和回退链路；</li>
+      <li>业务价值与失败成本。</li>
+    </ul>
+    <p>
+      Amazon Bedrock 的 Prompt Router 已经展示了这种思路：根据预期响应质量和成本，
+      在模型之间动态路由请求。企业自建 Router 时还需要加入数据策略、供应商健康状态和业务规则。
+    </p>
+
+    <h2>八、避免供应商锁定的六项工程措施</h2>
+    <ol>
+      <li>
+        <strong>建立模型适配层：</strong>业务代码只依赖统一的 Chat、Embedding、Tool Call
+        和 Structured Output 接口，不直接散落厂商 SDK。
+      </li>
+      <li>
+        <strong>对数据分级：</strong>区分公开、内部、机密和核心资产，并为每一级规定可用模型、
+        留存时间、地域和日志策略。
+      </li>
+      <li>
+        <strong>建立多模型 Eval：</strong>用同一数据集持续比较任务成功率、工具准确率、延迟、
+        成本和安全违规率，而不是依靠人工体验。
+      </li>
+      <li>
+        <strong>给 Agent 设置硬预算：</strong>限制最大 Token、步骤、重试次数、并发、工具调用和总执行时间。
+      </li>
+      <li>
+        <strong>在 Gateway 集中治理：</strong>统一处理认证、限流、敏感信息过滤、Prompt Injection
+        防护、Trace 和成本统计。
+      </li>
+      <li>
+        <strong>定期演练退出：</strong>验证模型能否替换、数据能否导出、工作流能否迁移，
+        并在合同中明确数据处理、留存、事故响应和服务终止条款。
+      </li>
+    </ol>
+
+    <h2>九、结论：真正危险的是不可替换</h2>
+    <p>
+      Anthropic 的模型能力依然具有竞争力，商业数据政策也明确否认默认使用客户内容训练模型。
+      所谓“信任危机”的重点，并不是已经证实的数据盗窃，而是企业开始意识到：
+      隐私承诺无法替代架构控制权。
+    </p>
+    <p>
+      闭源 API 适合快速获得前沿能力；开放权重适合控制成本和部署边界；私有模型适合保护敏感任务。
+      未来更常见的企业架构不会完全闭源，也不会完全开源，而是混合使用：
+    </p>
+    <pre class="flow-code"><code>前沿模型负责能力上限
++ 开放模型承接高频任务
++ 私有部署保护敏感数据
++ AI Gateway 统一治理
++ Model Router 动态选择
++ Evals 持续验证</code></pre>
+    <p>
+      使用某一家模型并不危险。真正危险的是没有数据边界、没有成本指标、没有替代模型，
+      也没有经过演练的退出路径。
+    </p>
+
+    <h2>参考资料</h2>
+    <ul>
+      <li><a href="https://www.cnbc.com/2026/07/01/palantir-karp-open-ai-anthropic-tokens.html" target="_blank" rel="noreferrer">CNBC：Palantir CEO 对闭源模型 Token 模式的批评</a></li>
+      <li><a href="https://privacy.anthropic.com/en/articles/7996885-how-do-you-use-personal-data-in-model-training" target="_blank" rel="noreferrer">Anthropic：商业产品数据与模型训练政策</a></li>
+      <li><a href="https://openai.com/business-data/" target="_blank" rel="noreferrer">OpenAI：企业与 API 数据隐私政策</a></li>
+      <li><a href="https://www.anthropic.com/product/claude-code" target="_blank" rel="noreferrer">Anthropic：Claude Code</a></li>
+      <li><a href="https://cursor.com/blog/spacex-model-training" target="_blank" rel="noreferrer">Cursor：与 SpaceX 合作扩展模型训练</a></li>
+      <li><a href="https://blogs.nvidia.com/blog/palantir-secure-ai-us-agencies-nemotron-open-models/" target="_blank" rel="noreferrer">NVIDIA：Palantir、Nemotron 与 Sovereign AI</a></li>
+      <li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-routing.html" target="_blank" rel="noreferrer">AWS：Amazon Bedrock Prompt Routing</a></li>
+      <li><a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf" target="_blank" rel="noreferrer">NIST：Generative AI Risk Management Profile</a></li>
+      <li><a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/" target="_blank" rel="noreferrer">OWASP：Prompt Injection</a></li>
+    </ul>
+
+    <div class="article-next">
+      <span>继续阅读</span>
+      <a href={sitePath("notes/agent/agent-landscape-2026/")}>2026 Agent 技术全景 →</a>
+    </div>
+  </article>
+</NotesLayout>
