@@ -43,6 +43,16 @@ import { sitePath } from "../../../lib/site.js";
       <li>模型价格、版本、限流和产品方向改变时，业务能否快速迁移？</li>
       <li>底层模型供应商进入应用层后，是否仍然保持平台中立？</li>
     </ul>
+    <figure class="article-figure wide">
+      <img
+        src={sitePath("notes/closed-model-trust-crisis/closed-ai-trojan.png")}
+        alt="闭源 AI 服务带来的数据控制、成本、供应商锁定和潜在竞争风险"
+        loading="lazy"
+      />
+      <figcaption>
+        闭源 API 能快速提供先进能力，但企业也需要同时评估数据控制、Token 成本、供应商锁定和平台竞争风险。
+      </figcaption>
+    </figure>
 
     <h2>二、先把事实说清楚：信任问题不等于数据被盗</h2>
     <p>
@@ -81,6 +91,16 @@ import { sitePath } from "../../../lib/site.js";
       而是直接提供能够读取代码库、修改文件、运行测试和提交代码的编程 Agent。
       这不能证明 Anthropic 不当使用客户数据，但说明底层供应商与上层应用之间不存在永久边界。
     </p>
+    <figure class="article-figure wide">
+      <img
+        src={sitePath("notes/closed-model-trust-crisis/provider-to-competitor.png")}
+        alt="基础模型公司从模型供应商、平台控制者发展为应用竞争者"
+        loading="lazy"
+      />
+      <figcaption>
+        当基础模型平台继续向上扩展产品能力，原本的供应关系可能逐步转化为平台控制与应用层竞争。
+      </figcaption>
+    </figure>
     <p>
       Cursor 后续与 SpaceX 合作使用 Colossus 基础设施扩展自研模型训练，也体现了应用公司正在补齐自己的模型和算力能力。
       更准确的趋势不是“所有应用公司都要自己训练基础模型”，而是它们不愿永远只有一个上游选择。
@@ -118,6 +138,16 @@ import { sitePath } from "../../../lib/site.js";
       开放权重模型在高频、稳定、可批处理和数据敏感的任务中越来越有吸引力，
       但“本地部署一定便宜”同样是错误结论。
     </p>
+    <figure class="article-figure wide">
+      <img
+        src={sitePath("notes/closed-model-trust-crisis/closed-vs-private-tco.png")}
+        alt="闭源模型 API 与开放权重模型私有部署的总体拥有成本对比"
+        loading="lazy"
+      />
+      <figcaption>
+        成本比较不能只看单次 Token 价格，更合理的指标是包含模型调用、基础设施、重试、工具和人工修正的每个成功任务综合成本。
+      </figcaption>
+    </figure>
     <table>
       <thead>
         <tr><th>维度</th><th>闭源 API</th><th>开放权重与私有部署</th></tr>
@@ -159,6 +189,16 @@ import { sitePath } from "../../../lib/site.js";
 + 隔离部署
 + 权限治理
 + 完整审计</code></pre>
+    <figure class="article-figure wide">
+      <img
+        src={sitePath("notes/closed-model-trust-crisis/sovereign-ai-hybrid-architecture.png")}
+        alt="从自主算力、开放模型和企业数据到模型路由与业务应用的主权 AI 混合架构"
+        loading="lazy"
+      />
+      <figcaption>
+        主权 AI 不等于拒绝外部模型，而是让算力、模型、数据与治理保持可控，并把闭源 API 作为可选能力接入而非唯一依赖。
+      </figcaption>
+    </figure>
     <p>
       这种方案特别适合政府、关键基础设施、金融、医疗和强监管行业。
       但 NVIDIA 同时也是前沿模型公司的算力供应商，因此这不是简单的“开源对闭源”，
